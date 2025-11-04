@@ -13,20 +13,22 @@ export async function POST(req: Request) {
 
     const from = process.env.RESEND_FROM_EMAIL!;
     const to = process.env.RESEND_TO_EMAIL!;
+    const subject = 'New website lead from ' + name;
+    const textLines = [
+      'Name: ' + name,
+      'Email: ' + email,
+      'Phone: ' + (phone || '—'),
+      '',
+      'Message:',
+      String(message)
+    ];
 
     await resend.emails.send({
       from,
       to,
-      subject: New website lead from ,
+      subject,
       replyTo: email,
-      text: [
-        Name: ,
-        Email: ,
-        Phone: ,
-        `,
-        Message:,
-        ${message}
-      ].join('\n')
+      text: textLines.join('\n')
     });
 
     return NextResponse.json({ ok: true });
