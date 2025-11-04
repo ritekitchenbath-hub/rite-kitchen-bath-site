@@ -11,7 +11,7 @@ export default function VideoHero() {
             playsInline
             loop
             preload="metadata"
-            poster="/images/hero.jpg"
+            poster="/images/hero-placeholder.svg"
           >
             <source src="/videos/hero.mp4" type="video/mp4" />
             {/* Optional alternate: <source src="/videos/hero.web.mp4" type="video/mp4" /> */}
