@@ -18,6 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex-1">{children}</main>
         <Footer />
         <StickyCTA />
+
+        {/* Google Analytics loader */}
         {process.env.NEXT_PUBLIC_GA_ID ? (
           <script
             async
@@ -39,6 +41,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 "');\n",
             }}
           />
+        ) : null}
+
+        {/* reCAPTCHA v2 loader (only if site key is present) */}
+        {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+          <script async defer src="https://www.google.com/recaptcha/api.js"></script>
         ) : null}
       </body>
     </html>

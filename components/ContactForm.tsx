@@ -1,46 +1,133 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from "react";
+import { leadSchema, LeadInput } from "@/lib/validators";
+
+declare global {
+  interface Window {
+    grecaptcha?: any;
+  }
+}
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<'idle'|'sending'|'success'|'error'>('idle');
+  const [errors, setErrors] = useState<Record<string,string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    // Surface the site key to decide whether to load the script
+    const k = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || null;
+    if (k) {
+      setSiteKey(k);
+      // Load script once
+      if (typeof window !== "undefined" && !document.getElementById("recaptcha-script")) {
+        const s = document.createElement("script");
+        s.id = "recaptcha-script";
+        s.src = "https://www.google.com/recaptcha/api.js";
+        s.async = true;
+        s.defer = true;
+        document.head.appendChild(s);
+      }
+    }
+  }, []);
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus('sending');
-    const form = new FormData(e.currentTarget);
-    const body = Object.fromEntries(form.entries());
-    const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (res.ok) setStatus('success'); else setStatus('error');
+    setErrors({});
+    setSubmitting(true);
+
+    try {
+      const fd = new FormData(formRef.current!);
+      const data: LeadInput = {
+        name: String(fd.get("name") || ""),
+        email: String(fd.get("email") || ""),
+        phone: String(fd.get("phone") || ""),
+        message: String(fd.get("message") || ""),
+        recaptchaToken: undefined
+      };
+
+      // Validate client-side
+      const parsed = leadSchema.safeParse(data);
+      if (!parsed.success) {
+        const es: Record<string,string> = {};
+        parsed.error.issues.forEach(i => { es[i.path.join(".")] = i.message; });
+        setErrors(es);
+        setSubmitting(false);
+        return;
+      }
+
+      // If reCAPTCHA is configured, get token
+      if (siteKey && window.grecaptcha) {
+        const resp = window.grecaptcha.getResponse();
+        if (!resp) {
+          setErrors({ recaptcha: "Please confirm you are not a robot." });
+          setSubmitting(false);
+          return;
+        }
+        data.recaptchaToken = resp;
+      }
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setErrors({ form: j.error || "Something went wrong. Please try again." });
+        setSubmitting(false);
+        return;
+      }
+
+      // Success → go to thanks (fires GA event there)
+      window.location.href = "/thanks";
+    } catch (err) {
+      setErrors({ form: "Network error. Please try again." });
+      setSubmitting(false);
+    }
   }
 
   return (
-    <form onSubmit={onSubmit} className='space-y-4'>
-      <div>
-        <label className='block text-sm font-medium'>Name</label>
-        <input required name='name' className='mt-1 w-full rounded-md border border-brand-200 px-3 py-2' />
-      </div>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+    <form ref={formRef} onSubmit={onSubmit} className="section-card p-6 md:p-8">
+      <h1 className="font-serif text-2xl">Get a Free Consultation</h1>
+      <p className="mt-2 text-sm text-ink-900/70">We will get back to you within one business day.</p>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className='block text-sm font-medium'>Email</label>
-          <input required type='email' name='email' className='mt-1 w-full rounded-md border border-brand-200 px-3 py-2' />
+          <label className="block text-sm font-medium">Name</label>
+          <input name="name" className="mt-2 w-full rounded-md border border-wood-300 p-2" placeholder="John Doe" />
+          {errors.name ? <p className="mt-1 text-sm text-red-600">{errors.name}</p> : null}
         </div>
         <div>
-          <label className='block text-sm font-medium'>Phone</label>
-          <input name='phone' className='mt-1 w-full rounded-md border border-brand-200 px-3 py-2' />
+          <label className="block text-sm font-medium">Email</label>
+          <input name="email" type="email" className="mt-2 w-full rounded-md border border-wood-300 p-2" placeholder="you@email.com" />
+          {errors.email ? <p className="mt-1 text-sm text-red-600">{errors.email}</p> : null}
         </div>
-      </div>
-      <div>
-        <label className='block text-sm font-medium'>Message</label>
-        <textarea required name='message' rows={4} className='mt-1 w-full rounded-md border border-brand-200 px-3 py-2'></textarea>
+        <div>
+          <label className="block text-sm font-medium">Phone (optional)</label>
+          <input name="phone" className="mt-2 w-full rounded-md border border-wood-300 p-2" placeholder="941-111-1111" />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium">Message</label>
+          <textarea name="message" rows={5} className="mt-2 w-full rounded-md border border-wood-300 p-2" placeholder="Tell us about your project..." />
+          {errors.message ? <p className="mt-1 text-sm text-red-600">{errors.message}</p> : null}
+        </div>
+
+        {siteKey ? (
+          <div className="md:col-span-2">
+            <div className="g-recaptcha" data-sitekey={siteKey}></div>
+            {errors.recaptcha ? <p className="mt-1 text-sm text-red-600">{errors.recaptcha}</p> : null}
+          </div>
+        ) : null}
       </div>
 
-      <button disabled={status==='sending'} className='rounded-md bg-brand-500 px-4 py-2 text-white'>
-        {status==='sending' ? 'Sending…' : 'Send Message'}
+      {errors.form ? <p className="mt-4 text-sm text-red-600">{errors.form}</p> : null}
+
+      <button disabled={submitting} className="btn-primary mt-6">
+        {submitting ? "Sending..." : "Send Message"}
       </button>
-
-      {status==='success' && <p className='text-green-700'>Thanks! We’ll be in touch shortly.</p>}
-      {status==='error' && <p className='text-red-700'>Something went wrong. Please try again.</p>}
     </form>
   );
 }
