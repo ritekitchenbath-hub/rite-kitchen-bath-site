@@ -1,8 +1,11 @@
-export default async function sitemap() {
-  const base = 'https://example.com'; // replace after deploy
-  const routes = ['', '/services', '/areas', '/gallery', '/faq', '/contact'];
+import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes = ["", "/services", "/areas", "/gallery", "/faq", "/contact"];
+  const now = new Date();
   return routes.map((r) => ({
-    url: base + r,
-    lastModified: new Date().toISOString(),
+    url: siteUrl + r,
+    lastModified: now,
   }));
 }

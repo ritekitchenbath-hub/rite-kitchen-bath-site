@@ -2,11 +2,12 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyCTA from "@/components/StickyCTA";
+import { siteUrl } from "@/lib/site";
 
 export const metadata = {
   title: "Rite Kitchen & Bath — Bradenton & Palmetto",
   description: "Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.",
-  metadataBase: new URL("https://example.com"),
+  metadataBase: new URL(siteUrl),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
