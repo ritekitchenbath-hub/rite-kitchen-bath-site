@@ -1,37 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-  ],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  "#f1f5fb",
-          100: "#e2eaf7",
-          200: "#c4d4ee",
-          300: "#9fb8e3",
-          400: "#7396d6",
-          500: "#2b4a8f",   // primary navy
-          600: "#244077",
-          700: "#1d345f",
-          800: "#152848",
-          900: "#0e1b30",
+        wood: {
+          50:  "#f5efe7",  // warm cream
+          100: "#efe6db",
+          200: "#e3d4c0",
+          300: "#d2b89a",
+          400: "#c39a72",
+          500: "#a8754b",  // copper/wood mid
+          600: "#915e39",
+          700: "#7a4d31",
+          800: "#5a3e2b",  // deep walnut
+          900: "#2a1b12",  // near-black brown
         },
-        teal: {
-          500: "#2bb5a3"   // accent
-        }
+        brass: { 500: "#c19a54" },
+        ink:   { 900: "#1f130a" }
       },
+      boxShadow: { soft: "0 10px 30px rgba(31,19,10,0.10)" },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui"],
-        serif: ["Playfair Display", "Georgia", "serif"],
-      },
-      boxShadow: {
-        soft: "0 10px 30px rgba(0,0,0,0.08)"
-      },
-      borderRadius: {
-        xl2: "1rem"
+        sans: ["Inter","ui-sans-serif","system-ui"],
+        serif: ["Playfair Display","Georgia","serif"],
       }
     },
   },
