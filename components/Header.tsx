@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -23,8 +23,9 @@ export default function Header() {
   return (
     <header className={"sticky top-0 z-50 bg-white " + (scrolled ? "shadow-soft " : "") + "border-b border-brand-100"}>
       <div className="container h-16 flex items-center justify-between">
-        <Link href="/" aria-label="Rite Kitchen & Bath home" className="flex items-center gap-3">
-          <img src="/images/logo.svg" alt="Rite Kitchen & Bath" className="h-8 w-auto" />
+        <Link href="/" aria-label="Rite Kitchen & Bath home" className="flex items-center gap-2">
+          <span className="inline-block h-6 w-6 rounded-md bg-brand-500" aria-hidden />
+          <span className="font-semibold tracking-tight text-brand-900">Rite Kitchen &amp; Bath</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           {nav.map((n) => (
