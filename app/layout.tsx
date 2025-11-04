@@ -13,7 +13,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col">
+      {/* wood-grain base + ink text; keep flex layout exactly as-is */}
+      <body className="min-h-screen flex flex-col wood-grain text-ink-900 font-sans">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
