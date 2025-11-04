@@ -1,0 +1,37 @@
+import './globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import StickyCTA from '@/components/StickyCTA';
+
+export const metadata = {
+  title: 'Rite Kitchen & Bath — Bradenton & Palmetto',
+  description: 'Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.',
+  metadataBase: new URL('https://example.com')
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang='en'>
+      <body className='min-h-screen flex flex-col'>
+        <Header />
+        <main className='flex-1'>{children}</main>
+        <Footer />
+        <StickyCTA />
+        {process.env.NEXT_PUBLIC_GA_ID ? (
+          <script async src={https://www.googletagmanager.com/gtag/js?id=\}></script>
+        ) : null}
+        {process.env.NEXT_PUBLIC_GA_ID ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: 
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '\');
+            }}
+          />
+        ) : null}
+      </body>
+    </html>
+  );
+}
