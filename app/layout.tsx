@@ -18,16 +18,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <StickyCTA />
         {process.env.NEXT_PUBLIC_GA_ID ? (
-          <script async src={https://www.googletagmanager.com/gtag/js?id=\}></script>
+          <script async src={https://www.googletagmanager.com/gtag/js?id=}></script>
         ) : null}
         {process.env.NEXT_PUBLIC_GA_ID ? (
           <script
             dangerouslySetInnerHTML={{
               __html: 
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '\');
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '');
+              ,
             }}
           />
         ) : null}

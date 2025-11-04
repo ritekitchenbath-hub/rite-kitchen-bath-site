@@ -17,15 +17,15 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from,
       to,
-      subject: New website lead from \,
-      reply_to: email,
+      subject: New website lead from ,
+      replyTo: email,
       text: [
-        Name: \,
-        Email: \,
-        Phone: \,
+        Name: ,
+        Email: ,
+        Phone: ,
         `,
         Message:,
-        message
+        ${message}
       ].join('\n')
     });
 
