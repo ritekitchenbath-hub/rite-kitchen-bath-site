@@ -44,6 +44,14 @@ body {
 }
 .btn-primary:hover{ background: var(--walnut-deep); box-shadow: 0 8px 18px rgba(90,58,35,.22); }
 .btn-primary:active{ transform: translateY(1px); }
+.btn-primary:focus-visible{
+  outline: 2px solid var(--walnut);
+  outline-offset: 2px;
+}
+.btn-primary:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 /* Small utilities */
 hr.divider{ @apply border-wood-200; }

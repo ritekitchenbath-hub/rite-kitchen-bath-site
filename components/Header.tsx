@@ -44,8 +44,9 @@ export default function Header() {
 
         {/* Mobile burger */}
         <button
-          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-wood-300"
-          aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open}
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-wood-300 focus:outline-2 focus:outline-offset-2 focus:outline-wood-700"
+          aria-label={open ? "Close menu" : "Open menu"} 
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden>

@@ -15,7 +15,11 @@ export async function POST(req: Request) {
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     
-    if (recaptchaSecret && siteKey && recaptchaToken) {
+    if (recaptchaSecret && siteKey) {
+      // reCAPTCHA is configured - require token
+      if (!recaptchaToken) {
+        return NextResponse.json({ error: "reCAPTCHA required." }, { status: 400 });
+      }
       // Verify reCAPTCHA token with Google
       const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
@@ -27,7 +31,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "reCAPTCHA verification failed. Please try again." }, { status: 400 });
       }
     } else {
-      // Fallback: require honeypot field to be empty
+      // reCAPTCHA not configured - use honeypot fallback
       if (honeypot && honeypot.trim() !== "") {
         return NextResponse.json({ error: "Spam detected." }, { status: 400 });
       }
