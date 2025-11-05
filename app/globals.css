@@ -2,26 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-
-/* Subtle wood grain pattern as a CSS var (SVG data-URI) */
-:root {
-  --woodgrain: url('data:image/svg+xml;utf8,<svg xmlns=""http://www.w3.org/2000/svg"" width=""160"" height=""160"" viewBox=""0 0 160 160""><defs><linearGradient id=""g"" x1=""0"" y1=""0"" x2=""1"" y2=""1""><stop offset=""0%"" stop-color=""%23efe6db""/><stop offset=""100%"" stop-color=""%23f5efe7""/></linearGradient></defs><rect width=""160"" height=""160"" fill=""url(%23g)""/><path d=""M0 80c20-18 40-18 60 0s40 18 60 0 40-18 60 0"" fill=""none"" stroke=""%23e3d4c0"" stroke-width=""2"" opacity=""0.25""/><path d=""M0 100c25-15 45-15 65 0s40 15 60 0 40-15 60 0"" fill=""none"" stroke=""%23d2b89a"" stroke-width=""1.5"" opacity=""0.18""/></svg>');
+/* === Design Tokens === */
+:root{
+  --bg-wood: #f7f2ea;
+  --ink-900: #1b1b1b;
+  --walnut: #7a4d31;
+  --walnut-deep: #5a3a23;
+  --navy: #2b4a8f;
 }
 
+/* === Global Base === */
 html, body { height: 100%; }
 body {
-  @apply bg-wood-50 text-ink-900 antialiased;
-  background-image: var(--woodgrain);
-  background-size: 320px 320px;
+  @apply text-ink-900;
 }
 
-.container { @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8; }
+/* Subtle wood grain over warm base */
+.wood-grain{
+  background-color: var(--bg-wood);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.65)),
+    repeating-linear-gradient(25deg,
+      rgba(122,77,49,0.045) 0px,
+      rgba(122,77,49,0.045) 2px,
+      rgba(122,77,49,0.015) 2px,
+      rgba(122,77,49,0.015) 6px
+    );
+  background-blend-mode: normal, multiply;
+}
 
-.link { @apply text-wood-700 hover:underline; }
+/* Cards & Buttons */
+.section-card{
+  @apply bg-white rounded-3xl shadow-soft border border-wood-100;
+}
 
-/* Cards/sections */
-.section-card { @apply bg-white rounded-xl shadow-soft; }
+.btn-primary{
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-white;
+  background: var(--walnut);
+  box-shadow: 0 6px 14px rgba(122,77,49,.18);
+  transition: transform .08s ease-out, box-shadow .2s ease;
+}
+.btn-primary:hover{ background: var(--walnut-deep); box-shadow: 0 8px 18px rgba(90,58,35,.22); }
+.btn-primary:active{ transform: translateY(1px); }
 
-/* Buttons */
-.btn-primary { @apply inline-flex items-center rounded-md bg-wood-700 text-white px-5 py-2.5 hover:opacity-95; }
+/* Small utilities */
+hr.divider{ @apply border-wood-200; }

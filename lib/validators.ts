@@ -9,3 +9,15 @@ export const leadSchema = z.object({
 });
 
 export type LeadInput = z.infer<typeof leadSchema>;
+
+
+import { z } from "zod";
+
+export const leadSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email required"),
+  phone: z.string().optional(),
+  message: z.string().min(1, "Message required"),
+  recaptchaToken: z.string().optional(),
+  honeypot: z.string().optional(),
+});

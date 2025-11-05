@@ -12,6 +12,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-google-recaptcha": "^3.1.0",
     "resend": "latest",
     "zod": "latest"
   },
