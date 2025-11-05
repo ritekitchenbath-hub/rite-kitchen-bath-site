@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Cabinet Refacing & Custom Cabinetry Services | Rite Kitchen & Bath",
+  description: "Professional cabinet refacing, custom cabinetry, finishing, repairs, and hardware installation in Bradenton and Palmetto, FL. Licensed and insured."
+};
+
 export default function ServicesPage() {
   return (
     <div className='container py-12'>

@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Service Areas: Bradenton & Palmetto, FL | Rite Kitchen & Bath",
+  description: "Serving Bradenton, Palmetto, Ellenton, Parrish, Terra Ceia, and West Bradenton, FL. Premium kitchen and bath cabinetry services."
+};
+
 export default function AreasPage() {
   return (
     <div className='container py-12'>

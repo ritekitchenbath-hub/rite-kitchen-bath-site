@@ -44,7 +44,8 @@ export default function ContactForm() {
         email: String(fd.get("email") || ""),
         phone: String(fd.get("phone") || ""),
         message: String(fd.get("message") || ""),
-        recaptchaToken: undefined
+        recaptchaToken: undefined,
+        honeypot: String(fd.get("website") || "")
       };
 
       // Validate client-side
@@ -82,7 +83,7 @@ export default function ContactForm() {
       }
 
       // Success → go to thanks (fires GA event there)
-      window.location.href = "/thanks";
+      window.location.href = "/thanks?src=contact";
     } catch (err) {
       setErrors({ form: "Network error. Please try again." });
       setSubmitting(false);
@@ -121,6 +122,16 @@ export default function ContactForm() {
             {errors.recaptcha ? <p className="mt-1 text-sm text-red-600">{errors.recaptcha}</p> : null}
           </div>
         ) : null}
+
+        {/* Honeypot field (hidden from users) */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          className="sr-only"
+          aria-hidden="true"
+        />
       </div>
 
       {errors.form ? <p className="mt-4 text-sm text-red-600">{errors.form}</p> : null}

@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Frequently Asked Questions | Rite Kitchen & Bath",
+  description: "Common questions about kitchen and bath cabinetry, refacing timelines, licensing, and services in Bradenton and Palmetto, FL."
+};
+
 export default function FAQPage() {
   return (
     <div className='container py-12'>

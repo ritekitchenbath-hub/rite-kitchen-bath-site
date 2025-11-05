@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { leadSchema } from "@/lib/validators";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     const json = await req.json();
@@ -11,15 +9,14 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid form data." }, { status: 400 });
     }
-    const { name, email, phone, message, recaptchaToken } = parsed.data;
+    const { name, email, phone, message, recaptchaToken, honeypot } = parsed.data;
 
-    // Server-side reCAPTCHA check if keys exist
+    // Spam protection: reCAPTCHA if configured, else honeypot
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    if (recaptchaSecret && siteKey) {
-      if (!recaptchaToken) {
-        return NextResponse.json({ error: "reCAPTCHA required." }, { status: 400 });
-      }
+    
+    if (recaptchaSecret && siteKey && recaptchaToken) {
+      // Verify reCAPTCHA token with Google
       const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -27,7 +24,12 @@ export async function POST(req: Request) {
       });
       const verifyJson = await verifyRes.json();
       if (!verifyJson.success) {
-        return NextResponse.json({ error: "reCAPTCHA failed." }, { status: 400 });
+        return NextResponse.json({ error: "reCAPTCHA verification failed. Please try again." }, { status: 400 });
+      }
+    } else {
+      // Fallback: require honeypot field to be empty
+      if (honeypot && honeypot.trim() !== "") {
+        return NextResponse.json({ error: "Spam detected." }, { status: 400 });
       }
     }
 
@@ -37,6 +39,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email not configured." }, { status: 500 });
     }
 
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: "Email service not configured." }, { status: 500 });
+    }
+
+    const resend = new Resend(apiKey);
     const subject = "New website lead from " + name;
     const textLines = [
       "Name: " + name,
