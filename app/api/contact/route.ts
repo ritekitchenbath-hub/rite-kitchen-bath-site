@@ -15,42 +15,76 @@ export async function POST(req: Request) {
     const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    
-    if (turnstileSecret) {
-      // Priority A: Turnstile is configured - require token
-      if (!turnstileToken) {
-        return NextResponse.json({ error: "Turnstile required." }, { status: 400 });
-      }
-      // Verify Turnstile token with Cloudflare
-      const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+
+    const forwardedFor = req.headers.get("x-forwarded-for") || "";
+    const remoteip = forwardedFor.split(",")[0]?.trim(); // optional for verification
+
+    type CheckResult = { ok: boolean; reason: string; payload?: any };
+
+    async function verifyTurnstile(token?: string): Promise<CheckResult> {
+      if (!turnstileSecret) return { ok: false, reason: "turnstile-not-configured" };
+      if (!token) return { ok: false, reason: "turnstile-missing-token" };
+
+      const body = new URLSearchParams({ secret: turnstileSecret, response: token });
+      if (remoteip) body.set("remoteip", remoteip);
+
+      const resp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "secret=" + encodeURIComponent(turnstileSecret) + "&response=" + encodeURIComponent(turnstileToken)
+        body,
       });
-      const verifyJson = await verifyRes.json();
-      if (!verifyJson.success) {
-        return NextResponse.json({ error: "Turnstile failed." }, { status: 400 });
-      }
-    } else if (recaptchaSecret && recaptchaSiteKey) {
-      // Priority B: reCAPTCHA is configured - require token
-      if (!recaptchaToken) {
-        return NextResponse.json({ error: "reCAPTCHA required." }, { status: 400 });
-      }
-      // Verify reCAPTCHA token with Google
-      const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+
+      const j = await resp.json().catch(() => ({}));
+      const ok = !!j.success;
+      if (!ok) console.warn("[Turnstile verify fail]", { status: resp.status, remoteip, j });
+      return { ok, reason: ok ? "turnstile-pass" : "turnstile-fail", payload: j };
+    }
+
+    async function verifyRecaptcha(token?: string): Promise<CheckResult> {
+      if (!recaptchaSecret || !recaptchaSiteKey) return { ok: false, reason: "recaptcha-not-configured" };
+      if (!token) return { ok: false, reason: "recaptcha-missing-token" };
+
+      const body = new URLSearchParams({ secret: recaptchaSecret, response: token });
+      if (remoteip) body.set("remoteip", remoteip);
+
+      const resp = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "secret=" + encodeURIComponent(recaptchaSecret) + "&response=" + encodeURIComponent(recaptchaToken)
+        body,
       });
-      const verifyJson = await verifyRes.json();
-      if (!verifyJson.success) {
-        return NextResponse.json({ error: "reCAPTCHA failed." }, { status: 400 });
-      }
+
+      const j = await resp.json().catch(() => ({}));
+      const ok = !!j.success;
+      if (!ok) console.warn("[reCAPTCHA verify fail]", { status: resp.status, remoteip, j });
+      return { ok, reason: ok ? "recaptcha-pass" : "recaptcha-fail", payload: j };
+    }
+
+    let passed = false;
+    const reasons: string[] = [];
+
+    // 1) Try Turnstile first (do not hard-fail if missing/invalid yet)
+    const t = await verifyTurnstile(turnstileToken);
+    reasons.push(t.reason);
+    if (t.ok) {
+      passed = true;
     } else {
-      // Priority C: Neither configured - use honeypot fallback
-      if (honeypot && honeypot.trim() !== "") {
-        return NextResponse.json({ error: "Spam detected." }, { status: 400 });
+      // 2) Fallback: reCAPTCHA (if configured)
+      const r = await verifyRecaptcha(recaptchaToken);
+      reasons.push(r.reason);
+      if (r.ok) {
+        passed = true;
+      } else {
+        // 3) Last resort: Honeypot
+        if (honeypot && honeypot.trim() !== "") {
+          reasons.push("honeypot-hit");
+          return NextResponse.json({ error: "Spam detected." }, { status: 400 });
+        }
       }
+    }
+
+    if (!passed) {
+      // Keep generic; details recorded in server logs
+      return NextResponse.json({ error: "Verification failed." }, { status: 400 });
     }
 
     const from = String(process.env.RESEND_FROM_EMAIL || "");

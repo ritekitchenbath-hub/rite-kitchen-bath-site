@@ -40,6 +40,7 @@ export default function ContactForm() {
         s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
         s.async = true;
         s.defer = true;
+        // Note: Manual render is handled by useEffect below; auto-render attributes on element provide backup
         document.head.appendChild(s);
       }
     }
@@ -136,24 +137,32 @@ export default function ContactForm() {
         return;
       }
 
-      // If Turnstile is configured, require token
-      if (turnstileSiteKey) {
-        if (!turnstileToken) {
+      // Collect tokens for server-side fallback verification
+      // Server will try Turnstile first, then reCAPTCHA, then honeypot
+      
+      // Get reCAPTCHA token if widget is present
+      if (siteKey && window.grecaptcha) {
+        const recaptchaResp = window.grecaptcha.getResponse();
+        if (recaptchaResp) {
+          data.recaptchaToken = recaptchaResp;
+        }
+      }
+
+      // Client-side validation: require at least one token if widgets are visible
+      // (Server will handle fallback logic, but we provide immediate feedback)
+      if (turnstileSiteKey && !turnstileToken) {
+        // Turnstile widget is visible but no token
+        // If reCAPTCHA is also visible and has token, allow (server will use reCAPTCHA)
+        if (!data.recaptchaToken) {
           setErrors({ turnstile: "Please complete the security challenge." });
           setSubmitting(false);
           return;
         }
-      }
-
-      // If reCAPTCHA is configured, get token
-      if (siteKey && window.grecaptcha) {
-        const resp = window.grecaptcha.getResponse();
-        if (!resp) {
-          setErrors({ recaptcha: "Please confirm you are not a robot." });
-          setSubmitting(false);
-          return;
-        }
-        data.recaptchaToken = resp;
+      } else if (siteKey && !turnstileSiteKey && !data.recaptchaToken) {
+        // Only reCAPTCHA widget is visible, require token
+        setErrors({ recaptcha: "Please confirm you are not a robot." });
+        setSubmitting(false);
+        return;
       }
 
       const res = await fetch("/api/contact", {
@@ -205,7 +214,12 @@ export default function ContactForm() {
 
         {turnstileSiteKey ? (
           <div className="md:col-span-2">
-            <div ref={turnstileRef} id="cf-turnstile"></div>
+            <div
+              ref={turnstileRef}
+              className="cf-turnstile"
+              data-sitekey={turnstileSiteKey}
+              id="cf-turnstile"
+            ></div>
             {errors.turnstile ? <p className="mt-1 text-sm text-red-600">{errors.turnstile}</p> : null}
           </div>
         ) : null}

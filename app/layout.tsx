@@ -62,11 +62,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
         ) : null}
-
-        {/* reCAPTCHA v2 loader (only if site key is present) */}
-        {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
-          <script async defer src="https://www.google.com/recaptcha/api.js"></script>
-        ) : null}
       </body>
     </html>
   );
