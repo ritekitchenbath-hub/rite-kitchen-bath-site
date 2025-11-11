@@ -8,6 +8,25 @@ export const metadata = {
   title: "Rite Kitchen & Bath — Bradenton & Palmetto",
   description: "Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.",
   metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: "Rite Kitchen & Bath — Bradenton & Palmetto",
+    description: "Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.",
+    url: siteUrl,
+    siteName: "Rite Kitchen & Bath",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Rite Kitchen & Bath",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

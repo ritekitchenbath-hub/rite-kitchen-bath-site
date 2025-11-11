@@ -1,0 +1,36 @@
+
+> build
+> next build
+
+   Γû▓ Next.js 16.0.1 (Turbopack)
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 4.2s
+   Running TypeScript ...
+
+   We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+   The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+   	- include was updated to add '.next/types/**/*.ts'
+   	- include was updated to add '.next/dev/types/**/*.ts'
+   	- plugins was updated to add { name: 'next' }
+
+   The following mandatory changes were made to your tsconfig.json:
+
+   	- jsx was set to react-jsx (next.js uses the React automatic runtime)
+
+   Collecting page data ...
+Error: Missing API key. Pass it to the constructor `new Resend("re_123")`
+    at new er (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[root-of-the-server]__9afb4ee3._.js:2:129539)
+    at module evaluation (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[root-of-the-server]__9afb4ee3._.js:21:143071)
+    at instantiateModule (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[turbopack]_runtime.js:715:9)
+    at instantiateRuntimeModule (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[turbopack]_runtime.js:743:12)
+    at getOrInstantiateRuntimeModule (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[turbopack]_runtime.js:756:12)
+    at Object.m (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\chunks\[turbopack]_runtime.js:765:18)
+    at Object.<anonymous> (C:\Users\jaked\Projects\rite-kitchen-bath-site\.next\server\app\api\contact\route.js:6:3)
+
+> Build error occurred
+Error: Failed to collect page data for /api/contact
+    at ignore-listed frames {
+  type: 'Error'
+}

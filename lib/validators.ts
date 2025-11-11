@@ -5,7 +5,9 @@ export const leadSchema = z.object({
   email: z.string().email("Enter a valid email."),
   phone: z.string().optional(),
   message: z.string().min(10, "Tell us a bit more (10+ characters)."),
-  recaptchaToken: z.string().optional()
+  turnstileToken: z.string().optional(),
+  recaptchaToken: z.string().optional(),
+  honeypot: z.string().optional(),
 });
 
 export type LeadInput = z.infer<typeof leadSchema>;
