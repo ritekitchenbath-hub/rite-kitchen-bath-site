@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { TURNSTILE_SITE_KEY } from "@/lib/env";
+
 declare global {
   interface Window {
     turnstile?: {
@@ -13,7 +13,7 @@ declare global {
 }
 
 export default function ContactForm() {
-  const siteKey = TURNSTILE_SITE_KEY || "";
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const hasTurnstile = Boolean(siteKey);
   const [sdkReady, setSdkReady] = useState(false);
   const [token, setToken] = useState("");
@@ -152,7 +152,7 @@ export default function ContactForm() {
         />
 
         {/* Dev banner (non-production only) */}
-        {process.env.NEXT_PUBLIC_ENV_NAME !== "production" && (
+        {process.env.NODE_ENV !== "production" && (
           <div className="md:col-span-2 text-xs text-gray-500 p-2 bg-gray-100 rounded">
             Captcha: <b>{hasTurnstile ? "turnstile" : "honeypot"}</b> · SDK: <b>{sdkReady ? "ready" : "loading"}</b> · token:{" "}
             <b>{token ? token.slice(0, 10) + "…" : "(none)"}</b>
@@ -187,5 +187,3 @@ export default function ContactForm() {
     </form>
   );
 }
-
-

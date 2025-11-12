@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "RKB home" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: Rite Kitchen & Bath
+      - navigation [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /services
+        - link "Areas" [ref=e9] [cursor=pointer]:
+          - /url: /areas
+        - link "Gallery" [ref=e10] [cursor=pointer]:
+          - /url: /gallery
+        - link "FAQ" [ref=e11] [cursor=pointer]:
+          - /url: /faq
+        - link "Contact" [ref=e12] [cursor=pointer]:
+          - /url: /contact
+        - link "Free Consult" [ref=e13] [cursor=pointer]:
+          - /url: /contact
+  - main [ref=e14]:
+    - generic [ref=e16]:
+      - heading "Get a Free Consultation" [level=1] [ref=e17]
+      - paragraph [ref=e18]: We will get back to you within one business day.
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]: Name
+          - textbox "John Doe" [ref=e22]
+        - generic [ref=e23]:
+          - generic [ref=e24]: Email
+          - textbox "you@email.com" [ref=e25]
+        - generic [ref=e26]:
+          - generic [ref=e27]: Phone (optional)
+          - textbox "941-111-1111" [ref=e28]
+        - generic [ref=e29]:
+          - generic [ref=e30]: Message
+          - textbox "Tell us about your project..." [ref=e31]
+        - textbox [ref=e32]
+        - generic [ref=e33]: "Captcha: turnstile · SDK: ready · token: (none)"
+      - button "Send Message" [ref=e36] [cursor=pointer]
+  - contentinfo [ref=e37]:
+    - generic [ref=e38]:
+      - paragraph [ref=e39]: © 2025 Rite Kitchen & Bath. All rights reserved.
+      - paragraph [ref=e40]:
+        - text: "Phone:"
+        - link "(941) 111-1111" [ref=e41] [cursor=pointer]:
+          - /url: tel:19411111111
+  - button "Open Next.js Dev Tools" [ref=e47] [cursor=pointer]:
+    - img [ref=e48]
+  - alert [ref=e51]
+```
