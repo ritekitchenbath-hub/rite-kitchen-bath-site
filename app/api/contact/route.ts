@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { TURNSTILE_SECRET_KEY } from "@/lib/env";
 import { leadSchema } from "@/lib/validators";
 
 async function clientIp(h: Headers) {
@@ -12,7 +13,7 @@ async function clientIp(h: Headers) {
 }
 
 async function verifyTurnstile(token: string, ip: string | null) {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
+  const secret = TURNSTILE_SECRET_KEY;
   if (!secret) return { ok: false, codes: ["missing-secret"] };
 
   const body = new URLSearchParams({ secret, response: token });
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
     }
 
     // Spam protection priority ladder: Turnstile → reCAPTCHA → Honeypot
-    const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    const turnstileSecret = TURNSTILE_SECRET_KEY;
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
@@ -376,3 +377,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
