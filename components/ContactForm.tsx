@@ -152,7 +152,7 @@ export default function ContactForm() {
         />
 
         {/* Dev banner (non-production only) */}
-        {process\.env\.NEXT_PUBLIC_ENV_NAME !== "production" && (
+        {process.env.NEXT_PUBLIC_ENV_NAME !== "production" && (
           <div className="md:col-span-2 text-xs text-gray-500 p-2 bg-gray-100 rounded">
             Captcha: <b>{hasTurnstile ? "turnstile" : "honeypot"}</b> · SDK: <b>{sdkReady ? "ready" : "loading"}</b> · token:{" "}
             <b>{token ? token.slice(0, 10) + "…" : "(none)"}</b>
@@ -187,4 +187,5 @@ export default function ContactForm() {
     </form>
   );
 }
+
 
