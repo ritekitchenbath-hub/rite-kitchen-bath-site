@@ -1,0 +1,48 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [main, feat/final-deployment, feat/prod-cutover-and-tests]
+  push:
+    branches: [main, feat/final-deployment, feat/prod-cutover-and-tests]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        env:
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+          TURNSTILE_SECRET_KEY: 2x00000000000000000000BB
+          CAPTCHA_TEST_MODE: pass
+          NODE_ENV: development
+          RESEND_API_KEY: re_test_key
+          RESEND_FROM_EMAIL: test@example.com
+          RESEND_TO_EMAIL: test@example.com
+        run: pnpm test:e2e
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+

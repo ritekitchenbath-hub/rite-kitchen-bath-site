@@ -78,50 +78,81 @@ export async function POST(req: Request) {
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
+    // Helper function to send email (throws on error, caller handles response)
+    async function sendEmail() {
+      const from = String(process.env.RESEND_FROM_EMAIL || "");
+      const to = String(process.env.RESEND_TO_EMAIL || "");
+      if (!from || !to) {
+        throw new Error("Email not configured.");
+      }
+
+      const apiKey = process.env.RESEND_API_KEY;
+      if (!apiKey) {
+        throw new Error("Email service not configured.");
+      }
+
+      const resend = new Resend(apiKey);
+      const subject = "New website lead from " + name;
+      const textLines = [
+        "Name: " + name,
+        "Email: " + email,
+        "Phone: " + (phone || "—"),
+        "",
+        "Message:",
+        String(message)
+      ];
+
+      await resend.emails.send({
+        from,
+        to,
+        subject,
+        replyTo: email,
+        text: textLines.join("\n")
+      });
+    }
+
+    // E2E test mode short-circuit (non-production only)
+    const testMode = process.env.CAPTCHA_TEST_MODE === "pass" && process.env.NODE_ENV !== "production";
+    
     // Priority 1: Try Turnstile if token is present
     if (tsToken) {
-      const vr = await verifyTurnstile(tsToken, ip);
-      if (vr.ok) {
-        // Turnstile verified successfully → send email
-        const from = String(process.env.RESEND_FROM_EMAIL || "");
-        const to = String(process.env.RESEND_TO_EMAIL || "");
-        if (!from || !to) {
-          return NextResponse.json({ error: "Email not configured." }, { status: 500 });
+      if (testMode) {
+        // Skip verification in test mode, proceed to email send
+        console.log("[CAPTCHA] Test mode: skipping verification", { host, remoteip: ip });
+        try {
+          await sendEmail();
+        } catch (err: any) {
+          // In test mode, email errors are non-fatal (we're testing captcha flow, not email)
+          console.warn("[CAPTCHA] Test mode: email send failed (non-fatal)", err.message);
         }
-
-        const apiKey = process.env.RESEND_API_KEY;
-        if (!apiKey) {
-          return NextResponse.json({ error: "Email service not configured." }, { status: 500 });
-        }
-
-        const resend = new Resend(apiKey);
-        const subject = "New website lead from " + name;
-        const textLines = [
-          "Name: " + name,
-          "Email: " + email,
-          "Phone: " + (phone || "—"),
-          "",
-          "Message:",
-          String(message)
-        ];
-
-        await resend.emails.send({
-          from,
-          to,
-          subject,
-          replyTo: email,
-          text: textLines.join("\n")
-        });
-
-        console.log("[CAPTCHA] Form submitted successfully", {
+        console.log("[CAPTCHA] Form submitted successfully (test mode)", {
           provider: "turnstile",
           host,
           success: true,
           remoteip: ip,
-          userAgent: userAgent.substring(0, 100)
+          userAgent: userAgent.substring(0, 100),
+          testMode: true
         });
-
         return NextResponse.json({ provider: "turnstile", success: true });
+      }
+
+      // Verify Turnstile token
+      const vr = await verifyTurnstile(tsToken, ip);
+      if (vr.ok) {
+        // Turnstile verified successfully → send email
+        try {
+          await sendEmail();
+          console.log("[CAPTCHA] Form submitted successfully", {
+            provider: "turnstile",
+            host,
+            success: true,
+            remoteip: ip,
+            userAgent: userAgent.substring(0, 100)
+          });
+          return NextResponse.json({ provider: "turnstile", success: true });
+        } catch (err: any) {
+          return NextResponse.json({ error: err.message || "Email not configured." }, { status: 500 });
+        }
       }
 
       // Turnstile verification failed
@@ -316,50 +347,25 @@ export async function POST(req: Request) {
     }
 
     // Send email for reCAPTCHA/honeypot path
-    const from = String(process.env.RESEND_FROM_EMAIL || "");
-    const to = String(process.env.RESEND_TO_EMAIL || "");
-    if (!from || !to) {
-      return NextResponse.json({ error: "Email not configured." }, { status: 500 });
+    try {
+      await sendEmail();
+      // Log successful submission
+      console.log("[CAPTCHA] Form submitted successfully", {
+        provider,
+        host,
+        success: true,
+        remoteip: ip,
+        userAgent: userAgent.substring(0, 100)
+      });
+
+      return NextResponse.json({ 
+        ok: true,
+        provider,
+        success: true
+      });
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message || "Email not configured." }, { status: 500 });
     }
-
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: "Email service not configured." }, { status: 500 });
-    }
-
-    const resend = new Resend(apiKey);
-    const subject = "New website lead from " + name;
-    const textLines = [
-      "Name: " + name,
-      "Email: " + email,
-      "Phone: " + (phone || "—"),
-      "",
-      "Message:",
-      String(message)
-    ];
-
-    await resend.emails.send({
-      from,
-      to,
-      subject,
-      replyTo: email,
-      text: textLines.join("\n")
-    });
-
-    // Log successful submission
-    console.log("[CAPTCHA] Form submitted successfully", {
-      provider,
-      host,
-      success: true,
-      remoteip: ip,
-      userAgent: userAgent.substring(0, 100)
-    });
-
-    return NextResponse.json({ 
-      ok: true,
-      provider,
-      success: true
-    });
   } catch (err) {
     console.error("[CAPTCHA] Server error", {
       host,

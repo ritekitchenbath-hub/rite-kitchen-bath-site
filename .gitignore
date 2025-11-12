@@ -2,3 +2,5 @@ node_modules/
 .next/
 .env
 .env.local
+# Allow .env.e2e to be committed (contains only test keys)
+!.env.e2e

@@ -6,7 +6,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "test:e2e": "cross-env NODE_ENV=development dotenv -e ./.env.e2e -- pnpm exec playwright test",
+    "test:e2e:headed": "cross-env NODE_ENV=development dotenv -e ./.env.e2e -- pnpm exec playwright test --headed"
   },
   "dependencies": {
     "next": "latest",
@@ -17,10 +19,13 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "^10.4.19",
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^7.3.0",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "^8.4.41",
