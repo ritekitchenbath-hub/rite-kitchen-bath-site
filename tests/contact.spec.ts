@@ -22,25 +22,14 @@ test.describe("Contact Form", () => {
     });
     expect(scriptCount).toBeGreaterThanOrEqual(1);
 
-    // Verify Turnstile iframe is rendered
-    const iframeCount = await page.evaluate(() => {
-      return document.querySelectorAll('iframe[src*="challenges.cloudflare.com"]').length;
+    // The widget's iframe lives in a closed shadow root, so assert on the token instead.
+    // Cloudflare's always-pass test site key issues a dummy token without user interaction.
+    await page.waitForFunction(() => !!(window as any).turnstile?.getResponse?.(), null, {
+      timeout: 15000,
     });
-    expect(iframeCount).toBeGreaterThanOrEqual(1);
 
-    // Check hidden input exists
     const tokenInput = await page.$('input[name="cf-turnstile-response"]');
     expect(tokenInput).not.toBeNull();
-
-    // In test mode with CAPTCHA_TEST_MODE=pass, we can submit without a real token
-    // The server will skip verification. For real tokens, we'd wait for the challenge to complete.
-    // For E2E, we'll simulate having a token by setting a test value (test mode allows this)
-    await page.evaluate(() => {
-      const input = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
-      if (input) {
-        input.value = "test-token-for-e2e";
-      }
-    });
 
     // Fill out the form
     await page.fill('input[name="name"]', "Test User");
