@@ -52,5 +52,3 @@ export default function ContactPage() {
     </>
   );
 }
-
-// reCAPTCHA key test 11/11/2025 09:24:31

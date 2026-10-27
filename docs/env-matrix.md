@@ -1,96 +1,45 @@
-# Environment Variables Matrix
+# Environment Variables
 
-This document tracks all environment variables required for the Rite Kitchen & Bath website across different environments.
+Set these in Vercel → Project → Settings → Environment Variables.
 
-## Environment Matrix
+**Type** column: store anything marked *Secret* as Vercel's **Secret** type (write-only). Everything else can be **Config**. `NEXT_PUBLIC_*` values are shipped to the browser, so never put a credential in one.
 
-| Variable | Client/Server | Dev | Preview | Prod | Service/Usage |
-|----------|---------------|-----|---------|------|---------------|
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Client | `dev_turnstile_sitekey` | `preview_turnstile_sitekey` | `prod_turnstile_sitekey` | Cloudflare Turnstile (public site key) |
-| `TURNSTILE_SECRET_KEY` | Server | `dev_turnstile_secret` | `preview_turnstile_secret` | `prod_turnstile_secret` | Cloudflare Turnstile (private secret key) |
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Client | `dev_recaptcha_sitekey` | `preview_recaptcha_sitekey` | `prod_recaptcha_sitekey` | Google reCAPTCHA (public site key, fallback) |
-| `RECAPTCHA_SECRET_KEY` | Server | `dev_recaptcha_secret` | `preview_recaptcha_secret` | `prod_recaptcha_secret` | Google reCAPTCHA (private secret key, fallback) |
-| `RESEND_API_KEY` | Server | `re_...` | `re_...` | `re_...` | Resend (email service) |
-| `RESEND_FROM_EMAIL` | Server | `noreply@...` | `noreply@...` | `noreply@ritekitchenbath.com` | Resend (sender email) |
-| `RESEND_TO_EMAIL` | Server | `test@...` | `test@...` | `info@ritekitchenbath.com` | Resend (recipient email) |
-| `NEXT_PUBLIC_SITE_URL` | Client | `http://localhost:3000` | `https://feat-xxx.vercel.app` | `https://ritekitchenbath.com` | Site metadata/SEO |
-| `NEXT_PUBLIC_GA_ID` | Client | `G-XXXXXX` | `G-XXXXXX` | `G-XXXXXX` | Google Analytics |
-| `CAPTCHA_TEST_MODE` | Server | `pass` (E2E only) | - | - | E2E test mode (skip verification) |
+| Variable | Type | Environments | Purpose |
+|----------|------|--------------|---------|
+| `NEXT_PUBLIC_ENV_NAME` | Config | Production = `production`, Preview = `preview` | Picks Turnstile keys; hides the dev banner in prod |
+| `NEXT_PUBLIC_SITE_URL` | Config | Production (`https://ritekitchenbath.com`) | Canonical URLs, sitemap, OG tags |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Config | Production | Cloudflare Turnstile widget (prod widget) |
+| `TURNSTILE_SECRET_KEY` | **Secret** | Production | Turnstile server verification (prod widget) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY_PREVIEW` | Config | Preview | Turnstile widget for `*.vercel.app` previews |
+| `TURNSTILE_SECRET_KEY_PREVIEW` | **Secret** | Preview | Turnstile verification for previews |
+| `RESEND_API_KEY` | **Secret** | Production, Preview | Lead notification email |
+| `RESEND_FROM_EMAIL` | Config | Production, Preview | Sender, must be on a Resend-verified domain |
+| `RESEND_TO_EMAIL` | Config | Production, Preview | Where lead emails go |
+| `HUBSPOT_PORTAL_ID` | Config | Production, Preview | HubSpot account ID (optional, enables CRM sync) |
+| `HUBSPOT_FORM_ID` | Config | Production, Preview | HubSpot form GUID that leads are submitted to |
+| `NEXT_PUBLIC_GA_ID` | Config | Production | Google Analytics 4 measurement ID |
 
-## Environment-Specific Configuration
+Leads are delivered to email (Resend) and HubSpot in parallel. A submission succeeds if at least one of them is configured and accepts it.
 
-### Development
-- **Host**: `localhost:3000`, `127.0.0.1`
-- **Turnstile**: Uses dev site key (must allow `localhost:3000` and `127.0.0.1`)
-- **reCAPTCHA**: Uses dev site key (must allow `localhost` and `127.0.0.1`)
-- **Email**: Uses test recipient (optional, can be same as prod for testing)
+## HubSpot setup
 
-### Preview (Vercel)
-- **Host**: `feat-xxx-rite-kitchen-bath-site.vercel.app` (varies per branch)
-- **Turnstile**: Uses preview site key (must allow Preview hostname)
-- **reCAPTCHA**: Uses preview site key (must allow Preview hostname)
-- **Email**: Uses test recipient (optional)
+1. HubSpot → Marketing → Forms → create a form with fields `firstname`, `lastname`, `email`, `phone`, `message`.
+2. Copy the portal ID and form GUID from the form's embed code into `HUBSPOT_PORTAL_ID` / `HUBSPOT_FORM_ID`.
+3. Redeploy and submit a test lead; it should appear under Contacts.
 
-### Production
-- **Host**: `ritekitchenbath.com`, `www.ritekitchenbath.com`
-- **Turnstile**: Uses production site key (must allow production domains)
-- **reCAPTCHA**: Uses production site key (must allow production domains)
-- **Email**: Uses production recipient
+## Turnstile allowed hostnames
 
-## Domain Allowlist Requirements
+Cloudflare Dashboard → Turnstile → widget → Hostnames:
 
-### Cloudflare Turnstile
-Each environment requires domain allowlist configuration:
-- **Dev**: `localhost:3000`, `127.0.0.1`
-- **Preview**: `feat-xxx-rite-kitchen-bath-site.vercel.app` (per deployment)
-- **Prod**: `ritekitchenbath.com`, `www.ritekitchenbath.com`
+- Production widget: `ritekitchenbath.com`, `www.ritekitchenbath.com`
+- Preview widget: `vercel.app` (covers every preview URL), `localhost`
 
-**Location**: Cloudflare Dashboard → Turnstile → Site Key Settings → Allowed Websites
+## Rotating a secret
 
-### Google reCAPTCHA
-Each environment requires domain allowlist configuration:
-- **Dev**: `localhost`, `127.0.0.1`
-- **Preview**: `feat-xxx-rite-kitchen-bath-site.vercel.app` (per deployment)
-- **Prod**: `ritekitchenbath.com`, `www.ritekitchenbath.com`
+1. Generate a new value at the provider (Resend → API Keys; Cloudflare → Turnstile → widget → Rotate secret key).
+2. In Vercel, edit the Secret and paste the new value (Config variables must be deleted and re-added as Secret).
+3. Redeploy, send a test lead, then revoke the old value at the provider.
 
-**Location**: Google reCAPTCHA Admin Console → Site Settings → Domains
+## Local / E2E
 
-## Test Mode (E2E Only)
-
-When `CAPTCHA_TEST_MODE=pass` and `NODE_ENV !== "production"`:
-- Turnstile verification is skipped
-- Form submissions proceed directly to email send
-- Used only for E2E testing in CI/local development
-
-## Required for Production
-
-**Minimum required variables for production deployment**:
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (PROD)
-- `TURNSTILE_SECRET_KEY` (PROD)
-- `RESEND_API_KEY`
-- `RESEND_FROM_EMAIL`
-- `RESEND_TO_EMAIL`
-- `NEXT_PUBLIC_SITE_URL=https://ritekitchenbath.com`
-
-**Optional (fallback)**:
-- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` (PROD)
-- `RECAPTCHA_SECRET_KEY` (PROD)
-
-## Verification
-
-Use `/api/captcha-debug` endpoint to verify environment variables are present:
-```bash
-curl https://your-domain.com/api/captcha-debug
-```
-
-Expected response:
-```json
-{
-  "env": "production",
-  "host": "ritekitchenbath.com",
-  "turnstileSiteKeyPresent": true,
-  "recaptchaSiteKeyPresent": true,
-  "timestamp": "2025-01-XX..."
-}
-```
-
+`.env.e2e` holds Cloudflare's public test keys and `CAPTCHA_TEST_MODE=pass`, which skips verification outside production. For local dev, copy real values into `.env.local` (git-ignored).

@@ -1,6 +1,15 @@
 node_modules/
 .next/
+.vercel/
 .env
 .env.local
 # Allow .env.e2e to be committed (contains only test keys)
 !.env.e2e
+
+# Build/test artifacts
+*.tsbuildinfo
+*.bak
+.logs/
+_backups/
+playwright-report/
+test-results/
