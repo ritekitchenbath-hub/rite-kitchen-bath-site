@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { business } from "@/lib/business";
 
 export const metadata = {
-  title: "Page Not Found | Rite Kitchen & Bath",
+  title: "Page Not Found",
   robots: { index: false, follow: false },
 };
 
@@ -22,7 +23,7 @@ export default function NotFound() {
           </Link>
         </div>
         <p className="mt-6 text-sm text-ink-900/60">
-          Need help? Call us at <a href="tel:+19411111111" className="text-wood-700 hover:underline">(941) 111-1111</a>
+          Need help? Call us at <a href={business.phoneHref} className="text-wood-700 hover:underline">{business.phone}</a>
         </p>
       </div>
     </section>

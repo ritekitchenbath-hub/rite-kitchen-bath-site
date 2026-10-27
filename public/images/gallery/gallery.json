@@ -1,9 +1,32 @@
 [
-  { "file": "placeholder_1.png", "caption": "Navy island cabinetry" },
-  { "file": "placeholder_2.png", "caption": "Walnut slab kitchen" },
-  { "file": "placeholder_3.png", "caption": "Classic white shaker" },
-  { "file": "placeholder_4.png", "caption": "Warm oak vanity" },
-  { "file": "placeholder_5.png", "caption": "Modern navy vanity" },
-  { "file": "placeholder_6.png", "caption": "Spa shower with backlit mirror" }
+  {
+    "file": "kitchen-navy-island-brass.webp",
+    "caption": "Navy shaker island with brass hardware",
+    "alt": "Kitchen with navy blue shaker island, white perimeter cabinets, and brass pulls"
+  },
+  {
+    "file": "kitchen-white-shaker-quartz.webp",
+    "caption": "White shaker refacing with quartz counters",
+    "alt": "Bright kitchen with white shaker cabinet doors, quartz countertops, and subway tile"
+  },
+  {
+    "file": "kitchen-sage-green-shaker.webp",
+    "caption": "Sage green coastal kitchen",
+    "alt": "Sage green painted shaker cabinets with matte black pulls and farmhouse sink"
+  },
+  {
+    "file": "kitchen-walnut-modern.webp",
+    "caption": "Modern walnut and white slab cabinets",
+    "alt": "Modern kitchen with walnut slab lower cabinets, white flat-panel uppers, and oven tower"
+  },
+  {
+    "file": "bath-white-oak-double-vanity.webp",
+    "caption": "White oak double vanity",
+    "alt": "Primary bathroom with white oak shaker double vanity and brushed gold faucets"
+  },
+  {
+    "file": "bath-navy-floating-vanity.webp",
+    "caption": "Navy floating vanity with backlit mirror",
+    "alt": "Guest bathroom with navy floating vanity, vessel sink, and backlit LED mirror"
+  }
 ]
-

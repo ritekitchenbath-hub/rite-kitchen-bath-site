@@ -1,42 +1,38 @@
 import fs from "fs";
 import path from "path";
-import Image from "next/image";
-import GalleryGridClient from "./GalleryGridClient";
+import GalleryGridClient, { type GalleryItem } from "./GalleryGridClient";
 
-export default function GalleryGrid() {
+const IMAGE_EXT = /\.(jpe?g|png|webp|avif)$/i;
+
+function loadGallery(): GalleryItem[] {
   const dir = path.join(process.cwd(), "public", "images", "gallery");
-  const files = fs.existsSync(dir)
-    ? fs
-        .readdirSync(dir)
-        .filter((f) =>
-          [".svg", ".jpg", ".jpeg", ".png", ".webp"].some((ext) =>
-            f.toLowerCase().endsWith(ext)
-          )
-        )
-        // natural sort so placeholder_1 .. placeholder_6 is in order
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-    : [];
+  if (!fs.existsSync(dir)) return [];
 
-  // Try to load captions from gallery.json
-  let captionsMap: Record<string, string> | undefined;
+  const files = fs.readdirSync(dir).filter((f) => IMAGE_EXT.test(f));
+  const fromName = (f: string) => f.replace(IMAGE_EXT, "").replace(/[-_]+/g, " ");
+
+  let listed: Partial<GalleryItem>[] = [];
   try {
-    const captionsPath = path.join(process.cwd(), "public", "images", "gallery", "gallery.json");
-    if (fs.existsSync(captionsPath)) {
-      const captionsData = fs.readFileSync(captionsPath, "utf-8");
-      const captions = JSON.parse(captionsData);
-      if (Array.isArray(captions)) {
-        captionsMap = {};
-        captions.forEach((item: { file: string; caption: string }) => {
-          if (item.file && item.caption) {
-            captionsMap![item.file] = item.caption;
-          }
-        });
-      }
-    }
+    listed = JSON.parse(fs.readFileSync(path.join(dir, "gallery.json"), "utf-8"));
   } catch {
-    // Silently fall back to filename-derived captions
-    captionsMap = undefined;
+    listed = [];
   }
 
-  return <GalleryGridClient files={files} captions={captionsMap} />;
+  // gallery.json controls order; any images not listed are appended alphabetically.
+  const ordered = listed.filter((i) => i.file && files.includes(i.file)).map((i) => i.file!);
+  const rest = files.filter((f) => !ordered.includes(f)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  return [...ordered, ...rest].map((file) => {
+    const meta = listed.find((i) => i.file === file);
+    return {
+      file,
+      caption: meta?.caption || fromName(file),
+      alt: meta?.alt || meta?.caption || fromName(file),
+    };
+  });
+}
+
+export default function GalleryGrid({ title = "Recent Work", limit }: { title?: string; limit?: number }) {
+  const items = loadGallery();
+  return <GalleryGridClient items={limit ? items.slice(0, limit) : items} title={title} />;
 }

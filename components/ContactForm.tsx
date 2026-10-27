@@ -126,7 +126,9 @@ export default function ContactForm() {
           <input
             name="phone"
             className="mt-2 w-full rounded-md border border-wood-300 p-2"
-            placeholder="941-111-1111"
+            type="tel"
+            autoComplete="tel"
+            placeholder="(941) 555-0123"
           />
         </div>
         <div className="md:col-span-2">
@@ -136,7 +138,7 @@ export default function ContactForm() {
             required
             rows={5}
             className="mt-2 w-full rounded-md border border-wood-300 p-2"
-            placeholder="Tell us about your project..."
+            placeholder="Kitchen or bath? Refacing, painting, or new cabinets? Your city and timeline help too."
           />
           {errors.message ? <p className="mt-1 text-sm text-red-600">{errors.message}</p> : null}
         </div>

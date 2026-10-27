@@ -1,32 +1,29 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyCTA from "@/components/StickyCTA";
 import { siteUrl } from "@/lib/site";
+import { business, localBusinessJsonLd, JsonLd } from "@/lib/business";
 
-export const metadata = {
-  title: "Rite Kitchen & Bath — Bradenton & Palmetto",
-  description: "Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.",
+const defaultTitle = "Rite Kitchen & Bath | Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Pete";
+const defaultDescription =
+  "Cabinet refacing, refinishing, custom cabinetry, and bathroom vanities for Bradenton, Sarasota, St. Petersburg, and Parrish, FL. Licensed & insured. Free in-home consultations.";
+
+export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  title: { default: defaultTitle, template: "%s | " + business.name },
+  description: defaultDescription,
   openGraph: {
-    title: "Rite Kitchen & Bath — Bradenton & Palmetto",
-    description: "Cabinetry, refacing, and finishing. Local craft. Clean installs. On time.",
+    title: defaultTitle,
+    description: defaultDescription,
     url: siteUrl,
-    siteName: "Rite Kitchen & Bath",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Rite Kitchen & Bath",
-      },
-    ],
+    siteName: business.name,
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "White shaker kitchen cabinets by Rite Kitchen & Bath" }],
     locale: "en_US",
     type: "website",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -34,8 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       {/* wood-grain base + ink text; keep flex layout exactly as-is */}
       <body className="min-h-screen flex flex-col wood-grain text-ink-900 font-sans">
+        <JsonLd data={localBusinessJsonLd()} />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-20 md:pb-0">{children}</main>
         <Footer />
         <StickyCTA />
 

@@ -1,31 +1,55 @@
+import CtaBand from "@/components/CtaBand";
+import { services } from "@/lib/services";
+import { business, JsonLd } from "@/lib/business";
+import { siteUrl } from "@/lib/site";
+
 export const metadata = {
-  title: "Cabinet Refacing & Custom Cabinetry Services | Rite Kitchen & Bath",
-  description: "Professional cabinet refacing, custom cabinetry, finishing, repairs, and hardware installation in Bradenton and Palmetto, FL. Licensed and insured."
+  title: "Cabinet Refacing, Refinishing & Custom Cabinetry Services",
+  description:
+    "Cabinet refacing, cabinet painting and refinishing, custom cabinetry, bathroom vanities, soft-close hardware upgrades, and repairs in Bradenton, Sarasota, St. Petersburg & Parrish, FL.",
+  alternates: { canonical: "/services" },
+};
+
+const servicesJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": services.map((s) => ({
+    "@type": "Service",
+    name: s.title,
+    description: s.summary,
+    url: siteUrl + "/services#" + s.id,
+    provider: { "@id": siteUrl + "/#business" },
+    areaServed: business.primaryAreas.map((a) => a + ", FL"),
+  })),
 };
 
 export default function ServicesPage() {
   return (
-    <div className='container py-12'>
-      <h1 className='font-serif text-3xl'>Services</h1>
-      <ul className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <li className='bg-white p-6 rounded-xl2 shadow-soft'>
-          <h3 className='font-semibold'>Cabinet Refacing</h3>
-          <p className='text-gray-600 mt-2'>New doors & drawer fronts, updated hardware, modern look without full tear-out.</p>
-        </li>
-        <li className='bg-white p-6 rounded-xl2 shadow-soft'>
-          <h3 className='font-semibold'>Custom Cabinetry & Finishing</h3>
-          <p className='text-gray-600 mt-2'>Shop-finished or on-site finishing with durable coatings and clean masking.</p>
-        </li>
-        <li className='bg-white p-6 rounded-xl2 shadow-soft'>
-          <h3 className='font-semibold'>Repairs & Adjustments</h3>
-          <p className='text-gray-600 mt-2'>Hinges, slides, alignment, touch-ups, color matching.</p>
-        </li>
-        <li className='bg-white p-6 rounded-xl2 shadow-soft'>
-          <h3 className='font-semibold'>Hardware & Trim</h3>
-          <p className='text-gray-600 mt-2'>Pulls/knobs, soft-close upgrades, scribe, crown, and base details.</p>
-        </li>
-      </ul>
-      <p className='mt-8 text-gray-600'>Hours: Mon–Fri 9–5 • Licensed & Insured • FL</p>
+    <div className="container py-12">
+      <JsonLd data={servicesJsonLd} />
+      <h1 className="font-serif text-3xl md:text-4xl">Kitchen &amp; Bath Cabinet Services</h1>
+      <p className="mt-3 max-w-3xl text-gray-700">
+        From a simple hardware refresh to fully custom cabinetry, every project is measured, finished, and installed
+        by our team. Not sure what you need? Start with a free consultation and we&apos;ll walk you through the options.
+      </p>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
+        {services.map((s) => (
+          <section key={s.id} id={s.id} className="section-card p-6 md:p-8 scroll-mt-24">
+            <h2 className="font-serif text-2xl">{s.title}</h2>
+            <p className="mt-3 text-gray-700">{s.summary}</p>
+            <ul className="mt-4 space-y-2 text-gray-600">
+              {s.details.map((d) => (
+                <li key={d}>✓ {d}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      <p className="mt-8 text-sm text-gray-600">{business.hours} · Licensed &amp; insured in Florida</p>
+      <div className="-mx-4">
+        <CtaBand />
+      </div>
     </div>
   );
 }

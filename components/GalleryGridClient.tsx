@@ -4,12 +4,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import GalleryLightbox from "./GalleryLightbox";
 
-interface GalleryGridClientProps {
-  files: string[];
-  captions?: Record<string, string>;
-}
+export type GalleryItem = { file: string; caption: string; alt: string };
 
-export default function GalleryGridClient({ files, captions }: GalleryGridClientProps) {
+export default function GalleryGridClient({ items, title }: { items: GalleryItem[]; title: string }) {
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({
     open: false,
     index: 0,
@@ -28,66 +25,38 @@ export default function GalleryGridClient({ files, captions }: GalleryGridClient
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const handleImageClick = (index: number) => {
-    setLightbox({ open: true, index });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleImageClick(index);
-    }
-  };
+  const files = items.map((i) => i.file);
+  const captions = Object.fromEntries(items.map((i) => [i.file, i.caption]));
 
   return (
     <>
       <section className="container py-12">
-        <h2 className="font-serif text-2xl">Recent Work</h2>
+        <h2 className="font-serif text-2xl md:text-3xl">{title}</h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {files.map((f, index) => (
-            <div
-              key={f}
-              className="rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer focus-within:ring-2 focus-within:ring-wood-500 focus-within:ring-offset-2 outline-none"
-              role="button"
-              tabIndex={0}
-              onClick={() => handleImageClick(index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              aria-label={`View ${f.replace(/\.(svg|jpg|jpeg|png|webp)$/i, "").replace(/[-_]/g, " ")} in full size`}
+          {items.map((item, index) => (
+            <button
+              key={item.file}
+              type="button"
+              className="group text-left rounded-xl overflow-hidden shadow-soft bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wood-500 focus-visible:ring-offset-2"
+              onClick={() => setLightbox({ open: true, index })}
+              aria-label={"View larger: " + item.caption}
             >
-              <div className="relative aspect-[4/3]">
+              <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
-                  src={"/images/gallery/" + f}
-                  alt={`Kitchen and bath project by Rite Kitchen & Bath — ${
-                    f
-                      .replace(/\.(svg|jpg|jpeg|png|webp)$/i, "")
-                      .replace(/[-_]/g, " ")
-                      .replace(/\s+/g, " ")
-                  }`}
+                  src={"/images/gallery/" + item.file}
+                  alt={item.alt}
                   fill
-                  priority={false}
-                  loading="lazy"
-                  className={`object-cover ${prefersReducedMotion ? "" : "transition-transform duration-300 hover:scale-[1.02]"}`}
+                  className={`object-cover ${prefersReducedMotion ? "" : "transition-transform duration-300 group-hover:scale-[1.03]"}`}
                   sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                 />
               </div>
-            </div>
+              <p className="px-4 py-3 text-sm text-gray-700">{item.caption}</p>
+            </button>
           ))}
-          {files.length === 0 &&
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-soft bg-white">
-                <div
-                  className="w-full h-[220px] flex items-center justify-center bg-wood-100 text-wood-700"
-                  role="img"
-                  aria-label={`Gallery placeholder image ${i + 1} - Example of kitchen or bath cabinetry work by Rite Kitchen & Bath`}
-                >
-                  Gallery Placeholder {i + 1}
-                </div>
-              </div>
-            ))}
         </div>
       </section>
 
-      {lightbox.open && files.length > 0 && (
+      {lightbox.open && items.length > 0 && (
         <GalleryLightbox
           files={files}
           startIndex={lightbox.index}
@@ -98,4 +67,3 @@ export default function GalleryGridClient({ files, captions }: GalleryGridClient
     </>
   );
 }
-

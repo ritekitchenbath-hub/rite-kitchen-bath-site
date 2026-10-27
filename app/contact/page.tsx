@@ -1,54 +1,38 @@
 import ContactForm from "@/components/ContactForm";
-import { siteUrl } from "@/lib/site";
+import { business } from "@/lib/business";
 
 export const metadata = {
-  title: "Contact Us | Rite Kitchen & Bath | Free Consultation",
-  description: "Get a free consultation for your kitchen or bath project in Bradenton and Palmetto, FL. We'll respond within one business day."
-};
-
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Rite Kitchen & Bath",
-  "url": siteUrl,
-  "telephone": "tel:+1-000-000-0000",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Bradenton",
-    "addressRegion": "FL",
-    "addressCountry": "US"
-  },
-  "areaServed": [
-    {
-      "@type": "City",
-      "name": "Bradenton"
-    },
-    {
-      "@type": "City",
-      "name": "Palmetto"
-    }
-  ],
-  "sameAs": [],
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      "opens": "09:00",
-      "closes": "17:00"
-    }
-  ]
+  title: "Free Cabinet Consultation & Estimate",
+  description:
+    "Request a free in-home consultation for cabinet refacing, refinishing, custom cabinetry, or vanities in Bradenton, Sarasota, St. Petersburg & Parrish, FL. We respond within one business day.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-      />
-      <section className="container py-12">
+    <section className="container py-12 grid gap-8 lg:grid-cols-3">
+      <div className="lg:col-span-2">
         <ContactForm />
-      </section>
-    </>
+      </div>
+      <aside className="section-card p-6 md:p-8 h-fit">
+        <h2 className="font-serif text-xl">Prefer to talk?</h2>
+        <p className="mt-2 text-gray-700">
+          Call <a className="font-semibold text-wood-700 hover:underline" href={business.phoneHref}>{business.phone}</a>
+        </p>
+        <p className="mt-1 text-sm text-gray-600">{business.hours}</p>
+
+        <h2 className="mt-6 font-serif text-xl">What happens next</h2>
+        <ol className="mt-2 list-decimal pl-5 space-y-1 text-sm text-gray-700">
+          <li>We reply within one business day to schedule a visit.</li>
+          <li>We measure and show you door styles, colors, and hardware.</li>
+          <li>You get a written estimate—no pressure, no obligation.</li>
+        </ol>
+
+        <h2 className="mt-6 font-serif text-xl">Service areas</h2>
+        <p className="mt-2 text-sm text-gray-700">
+          {[...business.primaryAreas, ...business.alsoServing].join(" · ")}
+        </p>
+      </aside>
+    </section>
   );
 }

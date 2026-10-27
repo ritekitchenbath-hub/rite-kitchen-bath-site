@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { business } from "@/lib/business";
 
 const nav = [
   { href: "/services", label: "Services" },
@@ -28,7 +29,7 @@ export default function Header() {
     <header className={"sticky top-0 z-50 bg-white " + (scrolled ? "shadow-soft " : "") + "border-b border-wood-200"}>
       <div className="container h-16 flex items-center justify-between">
         <Link href="/" aria-label="RKB home" className="flex items-center gap-2">
-          <span className="inline-block h-6 w-6 rounded-md bg-wood-700" aria-hidden />
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-wood-700 font-serif text-[11px] font-bold text-wood-50" aria-hidden>RK</span>
           <span className="font-semibold tracking-tight">Rite Kitchen &amp; Bath</span>
         </Link>
 
@@ -39,6 +40,9 @@ export default function Header() {
               {n.label}
             </Link>
           ))}
+          <a href={business.phoneHref} className="hidden lg:inline text-sm font-semibold text-wood-700 hover:underline">
+            {business.phone}
+          </a>
           <Link href="/contact" className="btn-primary">Free Consult</Link>
         </nav>
 

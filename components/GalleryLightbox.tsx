@@ -194,7 +194,7 @@ export default function GalleryLightbox({
           {currentFile && (
             <Image
               src={`/images/gallery/${currentFile}`}
-              alt={`Kitchen and bath project by Rite Kitchen & Bath — ${caption}`}
+              alt={caption}
               fill
               className={`object-contain ${transitionClass}`}
               sizes="100vw"
