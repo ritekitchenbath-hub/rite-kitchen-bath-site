@@ -48,10 +48,8 @@ test.describe("Contact Form", () => {
     const response = await responsePromise;
     expect(response.ok()).toBe(true);
 
-    // Verify response JSON
-    const responseJson = await response.json();
-    expect(responseJson).toHaveProperty("provider", "turnstile");
-    expect(responseJson).toHaveProperty("success", true);
+    // The form redirects on success, which discards the response body before it can be read.
+    await expect(page).toHaveURL(/\/thanks\?src=contact/, { timeout: 10000 });
   });
 
   test("should show dev banner in non-production", async ({ page }) => {
