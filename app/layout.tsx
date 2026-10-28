@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyCTA from "@/components/StickyCTA";
@@ -65,12 +64,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         ) : null}
 
-        {/* HubSpot tracking — sets hubspotutk so form POSTs can stitch the session */}
+        {/* Classic HubSpot snippet so their URL checker can see it in page source.
+            next/script afterInteractive only injects after JS, which fails HubSpot's crawler. */}
         {hsPortal ? (
-          <Script
+          <script
+            type="text/javascript"
             id="hs-script-loader"
+            async
+            defer
             src={"https://js.hs-scripts.com/" + hsPortal + ".js"}
-            strategy="afterInteractive"
           />
         ) : null}
       </body>

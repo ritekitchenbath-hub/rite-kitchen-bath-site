@@ -98,11 +98,8 @@ HubSpot ships First name, Last name, Email, and Phone. It does **not** always sh
 
 ### F. Prove it worked
 
-1. Open `https://www.ritekitchenbath.com`, DevTools → **Network**, reload.
-2. You should see `{Hub ID}.js` from `js.hs-scripts.com` (200 or 304).
-3. Submit a test lead from `/contact`.
-4. HubSpot → **Contacts**: the test person appears.
-5. The Resend/Gmail lead email should still arrive as before.
+1. Submit a test lead from `/contact`. Thanks page + Gmail + HubSpot **Contacts** is the real proof.
+2. HubSpot's **Validate tracking code** crawler only counts a raw `<script id="hs-script-loader">` in page source. If leads already land in Contacts, you can skip that checker.
 
 If HubSpot is misconfigured, the form still succeeds through email. Check Vercel → Deployment → **Functions** logs for a line starting `[contact] hubspot failed`.
 
