@@ -18,11 +18,10 @@ function loadGallery(): GalleryItem[] {
     listed = [];
   }
 
-  // gallery.json controls order; any images not listed are appended alphabetically.
+  // gallery.json is the display list and the order. Extra files in the folder stay off the page.
   const ordered = listed.filter((i) => i.file && files.includes(i.file)).map((i) => i.file!);
-  const rest = files.filter((f) => !ordered.includes(f)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  return [...ordered, ...rest].map((file) => {
+  return ordered.map((file) => {
     const meta = listed.find((i) => i.file === file);
     return {
       file,
