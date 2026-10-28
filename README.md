@@ -1,5 +1,7 @@
 # Rite Kitchen & Bath — Website
 
+Start here for everyday edits: **[CONTEXT.md](./CONTEXT.md)** (phone number, photos, video, form, what not to touch).
+
 Next.js (App Router) + TypeScript + Tailwind, deployed on Vercel. Use **pnpm 9** and **Node 20+**.
 
 ```bash
@@ -9,7 +11,7 @@ pnpm build
 pnpm test:e2e     # Playwright, uses .env.e2e
 ```
 
-- Business details (phone, service areas, hours) live in `lib/business.ts`.
+- Business details (phone, service areas, hours) live in `lib/business.tsx`.
 - City landing pages are generated from `lib/areas.ts` at `/areas/[slug]`.
 - Gallery images and captions: `public/images/gallery/` + `gallery.json`.
 - Contact form posts to `app/api/contact/route.ts` (Turnstile → Resend email + HubSpot). HubSpot tracking loads only when `HUBSPOT_PORTAL_ID` is set.
