@@ -6,8 +6,10 @@ import { TURNSTILE_SITE_KEY } from "@/lib/env";
 declare global {
   interface Window {
     turnstile?: {
+      render?: (container: string | HTMLElement, options: { sitekey: string; theme?: string }) => string;
       getResponse?: (id?: string | number) => string;
       reset?: (id?: string | number) => void;
+      remove?: (id?: string | number) => void;
     };
   }
 }
@@ -16,35 +18,32 @@ export default function ContactForm() {
   const siteKey = TURNSTILE_SITE_KEY || "";
   const hasTurnstile = Boolean(siteKey);
   const [sdkReady, setSdkReady] = useState(false);
-  const [token, setToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const tokenInputRef = useRef<HTMLInputElement | null>(null);
+  const widgetRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  // Keep hidden input in sync with the current token
   useEffect(() => {
-    if (!hasTurnstile || !sdkReady) return;
+    if (!hasTurnstile || !sdkReady || !widgetRef.current || !window.turnstile?.render) return;
+    if (widgetIdRef.current != null) return;
 
-    let timer: number | undefined;
-
-    const tick = () => {
-      try {
-        const v = window.turnstile?.getResponse?.() || "";
-        if (v && v !== token) {
-          setToken(v);
-          if (tokenInputRef.current) tokenInputRef.current.value = v;
-        }
-      } catch {}
-      timer = window.setTimeout(tick, 800);
-    };
-
-    tick();
+    try {
+      widgetIdRef.current = window.turnstile.render(widgetRef.current, {
+        sitekey: siteKey,
+        theme: "light",
+      });
+    } catch {
+      widgetIdRef.current = null;
+    }
 
     return () => {
-      if (timer) clearTimeout(timer);
+      try {
+        if (widgetIdRef.current != null) window.turnstile?.remove?.(widgetIdRef.current);
+      } catch {}
+      widgetIdRef.current = null;
     };
-  }, [hasTurnstile, sdkReady, token]);
+  }, [hasTurnstile, sdkReady, siteKey]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,38 +51,41 @@ export default function ContactForm() {
     setSubmitting(true);
 
     const form = e.currentTarget;
+    const body = new FormData(form);
 
-    // Ensure token exists if Turnstile is enabled
     if (hasTurnstile) {
-      const v = tokenInputRef.current?.value || window.turnstile?.getResponse?.() || "";
+      const widgetId = widgetIdRef.current ?? undefined;
+      let v = "";
+      try {
+        v = window.turnstile?.getResponse?.(widgetId) || "";
+      } catch {
+        v = "";
+      }
       if (!v) {
         setErrors({ form: "Please complete the security check." });
         setSubmitting(false);
         return;
       }
+      body.set("cf-turnstile-response", v);
     }
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        body: new FormData(form),
+        body,
       });
 
       const json = await res.json();
 
       if (json?.success || json?.ok) {
-        // Success → reset form and redirect
         form.reset();
-        setToken("");
-        if (tokenInputRef.current) tokenInputRef.current.value = "";
         try {
-          window.turnstile?.reset?.();
+          if (widgetIdRef.current != null) window.turnstile?.reset?.(widgetIdRef.current);
         } catch {}
-        // Redirect to thanks page
         window.location.href = "/thanks?src=contact";
         return;
       } else {
-        console.warn("[contact] failed", json);
+        console.warn("[contact] failed", json?.error || "verification failed");
         setErrors({ form: json?.error || "Verification failed. Please try again." });
         setSubmitting(false);
       }
@@ -156,27 +158,19 @@ export default function ContactForm() {
         {/* Dev banner (non-production only) */}
         {process.env.NEXT_PUBLIC_ENV_NAME !== "production" && (
           <div className="md:col-span-2 text-xs text-gray-500 p-2 bg-gray-100 rounded">
-            Captcha: <b>{hasTurnstile ? "turnstile" : "honeypot"}</b> · SDK: <b>{sdkReady ? "ready" : "loading"}</b> · token:{" "}
-            <b>{token ? token.slice(0, 10) + "…" : "(none)"}</b>
+            Captcha: <b>{hasTurnstile ? "turnstile" : "honeypot"}</b> · SDK: <b>{sdkReady ? "ready" : "loading"}</b>
           </div>
         )}
 
-        {/* Turnstile widget */}
         {hasTurnstile && (
           <div className="md:col-span-2">
             <Script
-              src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+              src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
               async
               defer
               onReady={() => setSdkReady(true)}
             />
-            <div
-              id="cf-turnstile"
-              className="cf-turnstile mt-2 min-h-[70px]"
-              data-sitekey={siteKey}
-              data-theme="light"
-            />
-            <input ref={tokenInputRef} type="hidden" name="cf-turnstile-response" value="" readOnly />
+            <div ref={widgetRef} id="cf-turnstile" className="mt-2 min-h-[70px]" />
           </div>
         )}
       </div>
@@ -189,5 +183,3 @@ export default function ContactForm() {
     </form>
   );
 }
-
-

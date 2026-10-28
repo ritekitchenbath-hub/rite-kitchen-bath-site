@@ -12,6 +12,27 @@ function clientIp(h: Headers) {
   );
 }
 
+function rateLimitIp(h: Headers) {
+  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "unknown";
+}
+
+// In-memory limiter: 5 POSTs / hour / IP. On Vercel this is per isolate, not a global limit.
+const RATE_WINDOW_MS = 60 * 60 * 1000;
+const RATE_MAX = 5;
+const rateHits = new Map<string, number[]>();
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const recent = (rateHits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_MAX) {
+    rateHits.set(ip, recent);
+    return true;
+  }
+  recent.push(now);
+  rateHits.set(ip, recent);
+  return false;
+}
+
 async function verifyTurnstile(secret: string, token: string, ip: string | null) {
   const body = new URLSearchParams({ secret, response: token });
   if (ip) body.set("remoteip", ip);
@@ -89,6 +110,11 @@ export async function POST(req: Request) {
   const ip = clientIp(req.headers);
 
   try {
+    // Production only. CAPTCHA_TEST_MODE does not bypass this.
+    if (process.env.NODE_ENV === "production" && isRateLimited(rateLimitIp(req.headers))) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const fd = await req.formData();
     const honeypot = String(fd.get("website") || "");
     const token = String(fd.get("cf-turnstile-response") || "");
