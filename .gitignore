@@ -1,9 +1,9 @@
 node_modules/
 .next/
 .vercel/
-.env
-.env.local
-# Allow .env.e2e to be committed (contains only test keys)
+# Block every env file so .env.development / .env.production / *.local cannot slip in.
+# .env.e2e is the exception: Cloudflare public test keys only.
+.env*
 !.env.e2e
 
 # Build/test artifacts
