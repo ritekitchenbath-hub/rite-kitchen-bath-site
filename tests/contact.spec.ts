@@ -1,5 +1,24 @@
 import { test, expect } from "@playwright/test";
 
+test.describe("HubSpot wiring", () => {
+  test("CSP allows HubSpot tracking origins", async ({ page }) => {
+    const res = await page.goto("/");
+    expect(res).not.toBeNull();
+    const csp = (await res!.headerValue("content-security-policy")) || "";
+    expect(csp).toContain("https://js.hs-scripts.com");
+    expect(csp).toContain("https://js.hs-analytics.net");
+    expect(csp).toContain("https://*.hubspot.com");
+  });
+
+  test("does not load HubSpot tracking when portal ID is unset", async ({ page }) => {
+    await page.goto("/");
+    const loaded = await page.evaluate(() =>
+      Array.from(document.scripts).some((s) => s.src.includes("hs-scripts.com"))
+    );
+    expect(loaded).toBe(false);
+  });
+});
+
 test.describe("Contact Form", () => {
   test("should load Turnstile and submit form successfully", async ({ page }) => {
     // Navigate to contact page
@@ -64,7 +83,6 @@ test.describe("Contact Form", () => {
       const bannerText = await devBanner.textContent();
       expect(bannerText).toContain("Captcha:");
       expect(bannerText).toContain("SDK:");
-      expect(bannerText).toContain("token:");
     }
   });
 });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { TURNSTILE_SECRET_KEY } from "@/lib/env";
+import { sendToHubSpot } from "@/lib/hubspot";
 import { leadSchema, type LeadInput } from "@/lib/validators";
 
 function clientIp(h: Headers) {
@@ -67,41 +68,6 @@ async function sendEmail(lead: LeadInput) {
     ].join("\n"),
   });
   if (error) throw new Error(error.message);
-  return true;
-}
-
-// HubSpot Forms API: https://legacydocs.hubspot.com/docs/methods/forms/submit_form
-async function sendToHubSpot(lead: LeadInput, req: Request, ip: string | null) {
-  const portalId = process.env.HUBSPOT_PORTAL_ID;
-  const formId = process.env.HUBSPOT_FORM_ID;
-  if (!portalId || !formId) return false;
-
-  const [firstname, ...rest] = lead.name.trim().split(/\s+/);
-  const hutk = /(?:^|;\s*)hubspotutk=([^;]+)/.exec(req.headers.get("cookie") || "")?.[1];
-
-  const r = await fetch(
-    `https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fields: [
-          { name: "firstname", value: firstname },
-          { name: "lastname", value: rest.join(" ") },
-          { name: "email", value: lead.email },
-          { name: "phone", value: lead.phone || "" },
-          { name: "message", value: lead.message },
-        ],
-        context: {
-          pageUri: req.headers.get("referer") || undefined,
-          pageName: "Contact",
-          ipAddress: ip || undefined,
-          hutk,
-        },
-      }),
-    }
-  );
-  if (!r.ok) throw new Error("HubSpot " + r.status + ": " + (await r.text()).slice(0, 300));
   return true;
 }
 

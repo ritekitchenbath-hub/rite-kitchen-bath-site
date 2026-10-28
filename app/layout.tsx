@@ -1,10 +1,12 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyCTA from "@/components/StickyCTA";
 import { siteUrl } from "@/lib/site";
 import { business, localBusinessJsonLd, JsonLd } from "@/lib/business";
+import { hubspotPortalId } from "@/lib/hubspot";
 
 const defaultTitle = "Rite Kitchen & Bath | Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Pete";
 const defaultDescription =
@@ -27,6 +29,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const hsPortal = hubspotPortalId();
+
   return (
     <html lang="en">
       {/* wood-grain base + ink text; keep flex layout exactly as-is */}
@@ -58,6 +62,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 process.env.NEXT_PUBLIC_GA_ID +
                 "');\n",
             }}
+          />
+        ) : null}
+
+        {/* HubSpot tracking — sets hubspotutk so form POSTs can stitch the session */}
+        {hsPortal ? (
+          <Script
+            id="hs-script-loader"
+            src={"https://js.hs-scripts.com/" + hsPortal + ".js"}
+            strategy="afterInteractive"
           />
         ) : null}
       </body>
