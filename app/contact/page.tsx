@@ -2,7 +2,7 @@ import ContactForm from "@/components/ContactForm";
 import { business } from "@/lib/business";
 
 export const metadata = {
-  title: "Free Cabinet Consultation & Estimate",
+  title: "Free in-home consultation",
   description:
     "Request a free in-home consultation for cabinet refacing, refinishing, custom cabinetry, or vanities in Bradenton, Sarasota, St. Petersburg & Parrish, FL. We respond within one business day.",
   alternates: { canonical: "/contact" },

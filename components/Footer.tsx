@@ -49,7 +49,7 @@ export default function Footer() {
           <ul className="mt-3 space-y-2">
             <li><Link className="hover:text-wood-700" href="/gallery">Gallery</Link></li>
             <li><Link className="hover:text-wood-700" href="/faq">FAQ</Link></li>
-            <li><Link className="hover:text-wood-700" href="/contact">Free Consultation</Link></li>
+            <li><Link className="hover:text-wood-700" href="/contact">Free in-home consultation</Link></li>
           </ul>
         </nav>
       </div>

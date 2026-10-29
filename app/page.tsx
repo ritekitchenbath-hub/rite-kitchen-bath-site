@@ -8,7 +8,7 @@ import { areas } from "@/lib/areas";
 import { business } from "@/lib/business";
 
 export const metadata = {
-  title: { absolute: "Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Pete | Rite Kitchen & Bath" },
+  title: { absolute: "Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Petersburg | Rite Kitchen & Bath" },
   description:
     "Get a brand-new kitchen look in days with cabinet refacing, refinishing, and custom cabinetry from Rite Kitchen & Bath. Serving Bradenton, Sarasota, St. Petersburg & Parrish, FL. Free in-home consultation.",
   alternates: { canonical: "/" },

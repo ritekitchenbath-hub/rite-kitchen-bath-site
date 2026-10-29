@@ -29,7 +29,7 @@ export default function ServicesPage() {
       <h1 className="font-serif text-3xl md:text-4xl">Kitchen &amp; Bath Cabinet Services</h1>
       <p className="mt-3 max-w-3xl text-gray-700">
         From a simple hardware refresh to fully custom cabinetry, every project is measured, finished, and installed
-        by our team. Not sure what you need? Start with a free consultation and we&apos;ll walk you through the options.
+        by our team. Not sure what you need? Start with a free in-home consultation and we&apos;ll walk you through the options.
       </p>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2">

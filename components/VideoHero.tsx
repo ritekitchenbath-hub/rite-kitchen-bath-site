@@ -2,7 +2,6 @@ import Link from "next/link";
 import { business } from "@/lib/business";
 
 export default function VideoHero() {
-  // The browser picks the first <source> that exists.
   return (
     <section className="container pt-8">
       <div className="relative overflow-hidden rounded-3xl shadow-soft h-[60vh] min-h-[420px] lg:h-[72vh]">
@@ -16,7 +15,6 @@ export default function VideoHero() {
           preload="none"
           aria-hidden
         >
-          <source src="/videos/hero.web.mp4" type="video/mp4" />
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
 
@@ -34,7 +32,7 @@ export default function VideoHero() {
               St.&nbsp;Petersburg &amp; Parrish.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn-primary px-5 py-3">Get a Free Consultation</Link>
+              <Link href="/contact" className="btn-primary px-5 py-3">Free in-home consultation</Link>
               <a href={business.phoneHref} className="inline-flex items-center rounded-full border border-wood-700/40 bg-white/70 px-5 py-3 font-semibold text-wood-800 hover:bg-white">
                 Call {business.phone}
               </a>

@@ -34,7 +34,7 @@ export default async function AreaPage({ params }: Props) {
 
   const localFaqs = [
     {
-      q: `Do you offer free consultations in ${area.name}?`,
+      q: `Do you offer a free in-home consultation in ${area.name}?`,
       a: `Yes. We provide free in-home consultations throughout ${area.name} and ${area.county}, including ${area.neighborhoods.slice(0, 4).join(", ")}.`,
     },
     ...faqs.slice(0, 3),
@@ -63,7 +63,7 @@ export default async function AreaPage({ params }: Props) {
         <h1 className="mt-4 font-serif text-3xl md:text-5xl leading-tight max-w-4xl">{area.headline}</h1>
         <p className="mt-4 max-w-3xl text-lg text-gray-700">{area.intro}</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/contact" className="btn-primary px-5 py-3">Free {area.name} Consultation</Link>
+          <Link href="/contact" className="btn-primary px-5 py-3">Free in-home consultation</Link>
           <a href={business.phoneHref} className="inline-flex items-center rounded-full border border-wood-700/40 bg-white px-5 py-3 font-semibold text-wood-800 hover:bg-wood-50">
             Call {business.phone}
           </a>
@@ -78,7 +78,7 @@ export default async function AreaPage({ params }: Props) {
               <p key={p}>{p}</p>
             ))}
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              <li>✓ Free in-home design consultation</li>
+              <li>✓ Free in-home consultation</li>
               <li>✓ Written, itemized estimates</li>
               <li>✓ Most refacing done in 3–5 days</li>
               <li>✓ Humidity-ready finishes</li>

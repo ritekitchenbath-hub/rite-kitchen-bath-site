@@ -62,9 +62,9 @@ export const areas: Area[] = [
     county: "Pinellas County",
     headline: "Cabinet Refacing & Kitchen Cabinet Updates in St. Petersburg, FL",
     intro:
-      "St. Pete's bungalows, mid-century ranches, and downtown condos all have one thing in common: kitchens that deserve better cabinets. We bring refacing, refinishing, and custom cabinetry across the Skyway to homeowners throughout St. Petersburg.",
+      "St. Petersburg bungalows, mid-century ranches, and downtown condos all have one thing in common: kitchens that deserve better cabinets. We bring refacing, refinishing, and custom cabinetry across the Skyway to homeowners throughout St. Petersburg.",
     body: [
-      "Older St. Pete homes often have tight or unusual kitchen layouts. Refacing keeps what fits and refreshes what shows, while custom pieces—tall pantries, open shelving, coffee bars—make the most of every inch.",
+      "Older St. Petersburg homes often have tight or unusual kitchen layouts. Refacing keeps what fits and refreshes what shows, while custom pieces—tall pantries, open shelving, coffee bars—make the most of every inch.",
       "For condo buildings, we plan around elevator reservations, parking, and quiet hours so the project runs smoothly for you and your neighbors.",
     ],
     neighborhoods: [

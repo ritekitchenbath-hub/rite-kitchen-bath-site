@@ -2,9 +2,9 @@ import { siteUrl } from "@/lib/site";
 
 export const business = {
   name: "Rite Kitchen & Bath",
-  phone: "(478) 334-2038",
-  phoneHref: "tel:+14783342038",
-  phoneE164: "+1-478-334-2038",
+  phone: "(941) 555-0148",
+  phoneHref: "tel:+19415550148",
+  phoneE164: "+1-941-555-0148",
   city: "Bradenton",
   region: "FL",
   hours: "Mon–Fri 9am–5pm · Sat by appointment",
@@ -47,6 +47,13 @@ export function localBusinessJsonLd() {
         dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         opens: "09:00",
         closes: "17:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "09:00",
+        closes: "17:00",
+        description: "By appointment",
       },
     ],
   };
