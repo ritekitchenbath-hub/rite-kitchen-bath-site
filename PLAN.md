@@ -24,7 +24,8 @@ This branch also includes the owner copy pass from `cursor/owner-copy-updates-cf
 
 ## Branch + commit
 
-See the latest git commit on `cursor/contact-lead-fields-cf42` after this work is committed. Update the hash here when it lands.
+**Branch:** `cursor/contact-lead-fields-cf42`  
+**Commit:** `da02eb8`
 
 ## Still open
 
