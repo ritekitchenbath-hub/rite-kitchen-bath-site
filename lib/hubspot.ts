@@ -1,4 +1,4 @@
-import type { LeadInput } from "@/lib/validators";
+import { formatLeadMessage, type LeadInput } from "@/lib/validators";
 
 /** HubSpot Hub ID is numeric and public (it appears in the tracking script URL). */
 export function hubspotPortalId() {
@@ -25,7 +25,7 @@ export async function sendToHubSpot(lead: LeadInput, req: Request, ip: string | 
     { name: "firstname", value: firstname },
     { name: "lastname", value: lastname },
     { name: "email", value: lead.email },
-    { name: "message", value: lead.message },
+    { name: "message", value: formatLeadMessage(lead) },
   ];
   if (lead.phone) fields.push({ name: "phone", value: lead.phone });
 

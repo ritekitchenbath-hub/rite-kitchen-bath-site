@@ -62,9 +62,11 @@ async function sendEmail(lead: LeadInput) {
       "Name: " + lead.name,
       "Email: " + lead.email,
       "Phone: " + (lead.phone || "—"),
+      "Project type: " + lead.projectType,
+      "Timeline: " + lead.timeline,
       "",
-      "Message:",
-      lead.message,
+      "Note:",
+      lead.note || "—",
     ].join("\n"),
   });
   if (error) throw new Error(error.message);
@@ -95,7 +97,9 @@ export async function POST(req: Request) {
       name: fd.get("name"),
       email: fd.get("email"),
       phone: fd.get("phone") || undefined,
-      message: fd.get("message"),
+      projectType: fd.get("projectType") || undefined,
+      timeline: fd.get("timeline") || undefined,
+      note: fd.get("note") || undefined,
     });
     if (!parsed.success) {
       return NextResponse.json(

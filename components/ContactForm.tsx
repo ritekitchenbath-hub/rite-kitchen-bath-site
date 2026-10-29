@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { TURNSTILE_SITE_KEY } from "@/lib/env";
+import { PROJECT_TYPES, TIMELINES } from "@/lib/lead-options";
 declare global {
   interface Window {
     turnstile?: {
@@ -133,16 +134,49 @@ export default function ContactForm() {
             placeholder="(941) 555-0123"
           />
         </div>
+
+        <fieldset className="md:col-span-2">
+          <legend className="text-sm font-medium">Project</legend>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {PROJECT_TYPES.map((value) => (
+              <label
+                key={value}
+                className="flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-wood-300 bg-white px-3 py-3 text-center text-sm font-medium has-[:checked]:border-wood-700 has-[:checked]:bg-wood-700 has-[:checked]:text-white"
+              >
+                <input type="radio" name="projectType" value={value} required className="sr-only" />
+                {value}
+              </label>
+            ))}
+          </div>
+          {errors.projectType ? <p className="mt-1 text-sm text-red-600">{errors.projectType}</p> : null}
+        </fieldset>
+
+        <fieldset className="md:col-span-2">
+          <legend className="text-sm font-medium">Timeline</legend>
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {TIMELINES.map((value) => (
+              <label
+                key={value}
+                className="flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-wood-300 bg-white px-3 py-3 text-center text-sm font-medium has-[:checked]:border-wood-700 has-[:checked]:bg-wood-700 has-[:checked]:text-white"
+              >
+                <input type="radio" name="timeline" value={value} required className="sr-only" />
+                {value}
+              </label>
+            ))}
+          </div>
+          {errors.timeline ? <p className="mt-1 text-sm text-red-600">{errors.timeline}</p> : null}
+        </fieldset>
+
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium">Message</label>
+          <label className="block text-sm font-medium">Note (optional)</label>
           <textarea
-            name="message"
-            required
-            rows={5}
+            name="note"
+            rows={2}
+            maxLength={500}
             className="mt-2 w-full rounded-md border border-wood-300 p-2"
-            placeholder="Kitchen or bath? Refacing, painting, or new cabinets? Your city and timeline help too."
+            placeholder="Anything we should know? City, style, or a good time to call."
           />
-          {errors.message ? <p className="mt-1 text-sm text-red-600">{errors.message}</p> : null}
+          {errors.note ? <p className="mt-1 text-sm text-red-600">{errors.note}</p> : null}
         </div>
 
         {/* Honeypot field (hidden from users) */}

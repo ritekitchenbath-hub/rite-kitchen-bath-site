@@ -53,7 +53,9 @@ test.describe("Contact Form", () => {
     // Fill out the form
     await page.fill('input[name="name"]', "Test User");
     await page.fill('input[name="email"]', "test@example.com");
-    await page.fill('textarea[name="message"]', "This is a test message from E2E test.");
+    await page.locator('label', { hasText: /^Kitchen$/ }).click();
+    await page.locator('label', { hasText: /^ASAP$/ }).click();
+    await page.fill('textarea[name="note"]', "E2E test note.");
 
     // Submit the form
     const responsePromise = page.waitForResponse(

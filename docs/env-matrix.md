@@ -72,6 +72,8 @@ HubSpot ships First name, Last name, Email, and Phone. It does **not** always sh
    | Phone number | `phone` | No |
    | Message | `message` | Yes |
 
+The website also collects **project type** and **timeline**. Those values are written into the Message field (plus an optional short note). Do **not** add extra HubSpot form fields for them unless you also change `lib/hubspot.ts` — unknown form fields can make the submit fail.
+
 7. Top right: **Review and update** → **Update** (publish).
 8. Click **Get embed code**.
 9. In the snippet, copy:
