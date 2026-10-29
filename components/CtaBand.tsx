@@ -17,7 +17,7 @@ export default function CtaBand({
         </div>
         <div className="mt-6 md:mt-0 flex flex-col sm:flex-row gap-3 shrink-0">
           <Link href="/contact" className="inline-flex justify-center rounded-full bg-white px-5 py-3 font-semibold text-wood-800 hover:bg-wood-50">
-            Get a Free Consultation
+            Free in-home consultation
           </Link>
           <a href={business.phoneHref} className="inline-flex justify-center rounded-full border border-white/40 px-5 py-3 font-semibold hover:bg-white/10">
             Call {business.phone}

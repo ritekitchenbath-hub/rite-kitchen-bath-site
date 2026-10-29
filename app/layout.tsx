@@ -7,7 +7,7 @@ import { siteUrl } from "@/lib/site";
 import { business, localBusinessJsonLd, JsonLd } from "@/lib/business";
 import { hubspotPortalId } from "@/lib/hubspot";
 
-const defaultTitle = "Rite Kitchen & Bath | Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Pete";
+const defaultTitle = "Rite Kitchen & Bath | Cabinet Refacing & Custom Cabinetry | Bradenton, Sarasota, St. Petersburg";
 const defaultDescription =
   "Cabinet refacing, refinishing, custom cabinetry, and bathroom vanities for Bradenton, Sarasota, St. Petersburg, and Parrish, FL. Licensed & insured. Free in-home consultations.";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: defaultDescription,
     url: siteUrl,
     siteName: business.name,
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "White shaker kitchen cabinets by Rite Kitchen & Bath" }],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Dark shaker kitchen cabinets by Rite Kitchen & Bath" }],
     locale: "en_US",
     type: "website",
   },

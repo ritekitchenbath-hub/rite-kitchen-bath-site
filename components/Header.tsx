@@ -43,7 +43,7 @@ export default function Header() {
           <a href={business.phoneHref} className="hidden lg:inline text-sm font-semibold text-wood-700 hover:underline">
             {business.phone}
           </a>
-          <Link href="/contact" className="btn-primary">Free Consult</Link>
+          <Link href="/contact" className="btn-primary">Free in-home consultation</Link>
         </nav>
 
         {/* Mobile burger */}
@@ -70,7 +70,7 @@ export default function Header() {
             </Link>
           ))}
           <Link href="/contact" onClick={handleNavClick} className="btn-primary justify-center mt-2">
-            Free Consult
+            Free in-home consultation
           </Link>
         </nav>
       </div>

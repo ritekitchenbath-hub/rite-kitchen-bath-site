@@ -31,7 +31,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "What areas do you serve?",
-    a: "We're based in Bradenton and serve Bradenton, Sarasota, St. Petersburg, and Parrish, plus Palmetto, Ellenton, Lakewood Ranch, Anna Maria Island, Longboat Key, Gulfport, and nearby communities.",
+    a: "We're based in Bradenton and serve Bradenton, Sarasota, St. Petersburg, and Parrish, plus Palmetto, Ellenton, Lakewood Ranch, Anna Maria Island, Longboat Key, Gulfport, Pinellas Park, and nearby communities.",
   },
   {
     q: "Is the consultation really free?",

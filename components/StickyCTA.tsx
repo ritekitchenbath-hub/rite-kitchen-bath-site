@@ -14,10 +14,10 @@ export default function StickyCTA() {
         </a>
         <Link 
           href='/contact' 
-          className='bg-wood-700 py-3 text-center text-white font-semibold focus:outline-2 focus:outline-offset-2 focus:outline-white'
-          aria-label='Get a free consultation'
+          className='bg-wood-700 py-3 px-2 text-center text-sm leading-tight text-white font-semibold focus:outline-2 focus:outline-offset-2 focus:outline-white'
+          aria-label='Free in-home consultation'
         >
-          Free Consult
+          Free in-home consultation
         </Link>
       </div>
     </div>

@@ -98,7 +98,7 @@ export default function ContactForm() {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="section-card p-6 md:p-8">
-      <h1 className="font-serif text-2xl">Get a Free Consultation</h1>
+      <h1 className="font-serif text-2xl">Free in-home consultation</h1>
       <p className="mt-2 text-sm text-ink-900/70">We will get back to you within one business day.</p>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
